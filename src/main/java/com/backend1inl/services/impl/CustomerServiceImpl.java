@@ -59,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
     //UPDATE
     @Override
     public Customer save(Customer customer) {
-        boolean exist = customerRepo.existsById(customer.getId());
+        boolean exist = doesCustomerExist(customer);
 
         if(exist) {
             final CustomerEntity customerEntity = customerToCustomerEntity(customer);
@@ -116,6 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(customerEntity.getFirstName())
                 .lastName(customerEntity.getLastName())
                 .ssn(customerEntity.getSsn())
+                .created(customerEntity.getCreated())
                 .lastUpdated(customerEntity.getLastUpdated())
                 .build();
     }
