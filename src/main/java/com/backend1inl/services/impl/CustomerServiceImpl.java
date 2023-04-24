@@ -67,14 +67,15 @@ public class CustomerServiceImpl implements CustomerService {
             return customerEntityToCustomer(savedCustomerEntity);
         }
 
-        var updatedCustomerEntity = CustomerEntity.builder()
+        var customerEntityToUpdate = CustomerEntity.builder()
                 .lastUpdated(LocalDateTime.now())
                 .ssn(customer.getSsn())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
+                .created(LocalDateTime.now())
                 .build();
 
-        var savedCustomerEntity = customerRepo.save(updatedCustomerEntity);
+        var savedCustomerEntity = customerRepo.save(customerEntityToUpdate);
 
         return customerEntityToCustomer(savedCustomerEntity);
     }
@@ -105,7 +106,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .ssn(customer.getSsn())
-                .created(LocalDateTime.now())
                 .lastUpdated(LocalDateTime.now())
                 .build();
     }
@@ -116,7 +116,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(customerEntity.getFirstName())
                 .lastName(customerEntity.getLastName())
                 .ssn(customerEntity.getSsn())
-                .created(customerEntity.getCreated())
                 .lastUpdated(customerEntity.getLastUpdated())
                 .build();
     }
