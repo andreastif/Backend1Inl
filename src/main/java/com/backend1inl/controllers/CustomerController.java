@@ -79,8 +79,8 @@ public class CustomerController {
         }
 
         log.info("POST customer: {}", savedCustomer);
-        savedCustomer.setCreated(LocalDateTime.now());
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        //savedCustomer.setCreated(LocalDateTime.now());
+        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
     //DELETE
