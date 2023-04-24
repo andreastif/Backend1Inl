@@ -1,4 +1,3 @@
 package com.backend1inl.services.impl;
 
-public class CustomerServiceImpl {
-}
+public class CustomerServiceImpl {}
