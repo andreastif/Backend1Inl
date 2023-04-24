@@ -25,23 +25,22 @@ public class CustomerController {
     }
 
     //CREATE
-    @PostMapping("/customers/add")
-    public ResponseEntity<List<Customer>> createCustomer(@RequestBody final Customer customer) {
+    @PostMapping
+    public ResponseEntity<List<Customer>> createCustomer(@Valid @RequestBody final Customer customer) {
         final Customer savedCustomer = customerService.create(customer);
         return new ResponseEntity<>(customerService.listCustomers(), HttpStatus.OK);
     }
 
     //READ
-    @GetMapping("/customers")
+    @GetMapping
     public ResponseEntity<List<Customer>> listCustomers(){
         return new ResponseEntity<>(customerService.listCustomers(),HttpStatus.OK);
     }
 
-    @GetMapping("/customers/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Customer> retrieveCustomer(@PathVariable final Long id){
-        final Optional<Customer> foundCustomer = customerService.findCustomerById(id);
-        return foundCustomer.map(customer -> new ResponseEntity<>(customer, HttpStatus.OK)) // if found
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND)); // if not found
+        final Customer foundCustomer = customerService.findCustomerById(id);
+        return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
     }
 
     //UPDATE
