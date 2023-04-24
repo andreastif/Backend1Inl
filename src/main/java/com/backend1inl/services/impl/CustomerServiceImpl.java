@@ -49,10 +49,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepo.findById(id)
                 .map(customerEntity -> customerEntityToCustomer(customerEntity))
                 .orElseThrow(() -> new NoSuchCustomerException("Customer with id: " + id + " doesn't exist"));
-        /*
-        final Optional<CustomerEntity> foundCustomer = customerRepo.findById(id);
-        return foundCustomer.map(customer -> customerEntityToCustomer(customer));
-         */
 
     }
 
