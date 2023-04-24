@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class CustomerController {
     }
 
     //CREATE
-    @PostMapping
+/*    @PostMapping
     public ResponseEntity<EntityModel<Customer>> createCustomer(@Valid @RequestBody final Customer customer) {
         final Customer savedCustomer = customerService.create(customer);
 
@@ -42,7 +43,7 @@ public class CustomerController {
         log.info("Created new customer with id {}", savedCustomer.getId());
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
-    }
+    }*/
 
     //READ
     @GetMapping
@@ -79,6 +80,7 @@ public class CustomerController {
         }
 
         log.info("POST customer: {}", savedCustomer);
+        savedCustomer.setCreated(LocalDateTime.now());
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 

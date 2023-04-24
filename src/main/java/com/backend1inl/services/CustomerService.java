@@ -13,8 +13,6 @@ public interface CustomerService {
 
     Customer findCustomerById(Long id);
 
-    Customer create (Customer customer);
-
     Customer save(Customer customer);
     boolean deleteCustomerById(Long id);
 

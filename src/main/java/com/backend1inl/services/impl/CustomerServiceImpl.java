@@ -27,6 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
+/*
     //CREATE
     @Override
     public Customer create(Customer customer) {
@@ -36,6 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customerEntityToCustomer(savedCustomerEntity);
     }
+*/
 
 
     //READ
