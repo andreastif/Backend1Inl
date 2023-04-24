@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,5 +32,8 @@ public class Customer {
     @NotEmpty(message = "Social security number is mandatory.")
     @Size(min = 10, max = 12, message = "Social security number needs to be 10 or 12 digits")
     private String ssn;
+
+    private LocalDateTime created;
+    private LocalDateTime lastUpdated;
 
 }
