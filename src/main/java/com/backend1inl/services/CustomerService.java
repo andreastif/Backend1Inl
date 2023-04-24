@@ -15,6 +15,8 @@ public interface CustomerService {
 
     Customer create (Customer customer);
 
+    Customer save(Customer customer);
     boolean deleteCustomerById(Long id);
 
+    boolean doesCustomerExist(Customer customer);
 }

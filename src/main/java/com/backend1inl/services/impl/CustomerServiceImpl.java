@@ -53,17 +53,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     //UPDATE
+    @Override
+    public Customer save(Customer customer) {
+        final CustomerEntity customerEntity = customerToCustomerEntity(customer);
+        final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
+
+        return customerEntityToCustomer(savedCustomerEntity);
+    }
+
+
 
     //DELETE
-/*    @Override - GAMMAL
-    public void deleteCustomerById(Long id) {
-        try {
-            customerRepo.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            new NoSuchCustomerException("Customer with id: " + id + " doesn't exist.");
-        }
-    }*/
-
     @Override
     public boolean deleteCustomerById(Long id) {
         Optional<CustomerEntity> match = customerRepo.findById(id);
@@ -72,6 +72,11 @@ public class CustomerServiceImpl implements CustomerService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean doesCustomerExist(Customer customer) {
+       return customerRepo.existsById(customer.getId());
     }
 
 
