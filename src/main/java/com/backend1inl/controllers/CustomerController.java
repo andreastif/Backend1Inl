@@ -63,6 +63,24 @@ public class CustomerController {
     }
 
     //UPDATE
+    @PutMapping("{id}")
+    public ResponseEntity<EntityModel<Customer>> updateList(@Valid @RequestBody Customer customer, @PathVariable Long id) {
+
+        customer.setId(id);
+        final boolean exists = customerService.doesCustomerExist(customer);
+        final Customer savedCustomer = customerService.save(customer);
+
+        EntityModel<Customer> entityModel = EntityModel.of(customer, linkTo(methodOn(CustomerController.class).retrieveCustomer(savedCustomer.getId())).withSelfRel(),
+                linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-lists"));
+
+        if (exists) {
+            log.info("UPDATED customer: {}", savedCustomer);
+            return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        }
+
+        log.info("POST customer: {}", savedCustomer);
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+    }
 
     //DELETE
     @DeleteMapping("{id}")
