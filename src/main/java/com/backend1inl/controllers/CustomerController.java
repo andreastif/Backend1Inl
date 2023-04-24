@@ -4,7 +4,9 @@ import com.backend1inl.domain.Customer;
 import com.backend1inl.services.CustomerService;
 import com.backend1inl.utils.DeleteResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("customers")
+@Slf4j // Logging
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -28,9 +31,17 @@ public class CustomerController {
 
     //CREATE
     @PostMapping
-    public ResponseEntity<List<Customer>> createCustomer(@Valid @RequestBody final Customer customer) {
+    public ResponseEntity<EntityModel<Customer>> createCustomer(@Valid @RequestBody final Customer customer) {
         final Customer savedCustomer = customerService.create(customer);
-        return new ResponseEntity<>(customerService.listCustomers(), HttpStatus.OK);
+
+        // links HATEOAS
+        EntityModel<Customer> entityModel = EntityModel.of(savedCustomer,
+                linkTo(methodOn(CustomerController.class).retrieveCustomer(savedCustomer.getId())).withSelfRel(),
+                linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-customers"));
+
+        log.info("Created new customer with id {}", savedCustomer.getId());
+
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
     //READ
@@ -42,7 +53,13 @@ public class CustomerController {
     @GetMapping("{id}")
     public ResponseEntity<EntityModel<Customer>> retrieveCustomer(@PathVariable final Long id) {
         final Customer foundCustomer = customerService.findCustomerById(id);
-        return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
+
+        // Hateoas links
+        EntityModel<Customer> entityModel = EntityModel.of(foundCustomer,
+                linkTo(methodOn(CustomerController.class).retrieveCustomer(foundCustomer.getId())).withSelfRel(),
+                linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-customers"));
+
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
     //UPDATE
