@@ -62,15 +62,17 @@ public class CustomerServiceImpl implements CustomerService {
         boolean exist = doesCustomerExist(customer);
 
         if(exist) {
-            final CustomerEntity customerEntity = customerToCustomerEntity(customer);
+            Customer match = findCustomerById(customer.getId());
 
-            customerEntity.setCreated(customer.getCreated());
-            customerEntity.setLastUpdated(LocalDateTime.now());
-            customerEntity.setSsn(customer.getSsn());
-            customerEntity.setLastName(customer.getLastName());
-            customerEntity.setFirstName(customer.getFirstName());
+            //final CustomerEntity customerEntity = customerToCustomerEntity(customer);
 
-            final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
+            match.setLastUpdated(LocalDateTime.now());
+            match.setSsn(customer.getSsn());
+            match.setLastName(customer.getLastName());
+            match.setFirstName(customer.getFirstName());
+            match.setCreated(match.getCreated()); // behövs ?
+
+            final CustomerEntity savedCustomerEntity = customerRepo.save(customerToCustomerEntity(match));
             return customerEntityToCustomer(savedCustomerEntity);
         }
 
