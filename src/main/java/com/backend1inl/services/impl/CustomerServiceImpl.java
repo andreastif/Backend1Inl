@@ -7,6 +7,7 @@ import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.services.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customerEntityToCustomer(savedCustomerEntity);
     }
 
+
     //READ
     @Override
     public List<Customer> listCustomers() {
@@ -57,6 +59,24 @@ public class CustomerServiceImpl implements CustomerService {
     //UPDATE
 
     //DELETE
+/*    @Override - GAMMAL
+    public void deleteCustomerById(Long id) {
+        try {
+            customerRepo.deleteById(id);
+        } catch (EmptyResultDataAccessException ex) {
+            new NoSuchCustomerException("Customer with id: " + id + " doesn't exist.");
+        }
+    }*/
+
+    @Override
+    public boolean deleteCustomerById(Long id) {
+        Optional<CustomerEntity> match = customerRepo.findById(id);
+        if(match.isPresent()) {
+            customerRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 
 
     //CONVERTER
