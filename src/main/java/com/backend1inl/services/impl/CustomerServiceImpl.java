@@ -64,10 +64,11 @@ public class CustomerServiceImpl implements CustomerService {
         if(exist) {
             final CustomerEntity customerEntity = customerToCustomerEntity(customer);
 
+            customerEntity.setCreated(customer.getCreated());
             customerEntity.setLastUpdated(LocalDateTime.now());
             customerEntity.setSsn(customer.getSsn());
-            customerEntity.setLastName(customerEntity.getLastName());
-            customerEntity.setFirstName(customerEntity.getFirstName());
+            customerEntity.setLastName(customer.getLastName());
+            customerEntity.setFirstName(customer.getFirstName());
 
             final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
             return customerEntityToCustomer(savedCustomerEntity);
