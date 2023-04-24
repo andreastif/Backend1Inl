@@ -7,7 +7,6 @@ import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.services.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -64,13 +63,11 @@ public class CustomerServiceImpl implements CustomerService {
         if(exist) {
             Customer match = findCustomerById(customer.getId());
 
-            //final CustomerEntity customerEntity = customerToCustomerEntity(customer);
-
             match.setLastUpdated(LocalDateTime.now());
             match.setSsn(customer.getSsn());
             match.setLastName(customer.getLastName());
             match.setFirstName(customer.getFirstName());
-            match.setCreated(match.getCreated()); // behövs ?
+            match.setCreated(match.getCreated());
 
             final CustomerEntity savedCustomerEntity = customerRepo.save(customerToCustomerEntity(match));
             return customerEntityToCustomer(savedCustomerEntity);
