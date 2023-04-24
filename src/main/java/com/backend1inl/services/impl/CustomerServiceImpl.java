@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
     //CREATE
     @Override
     public Customer create(Customer customer) {
+
         final CustomerEntity customerEntity = customerToCustomerEntity(customer);
         final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
 
@@ -39,6 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
     //READ
     @Override
     public List<Customer> listCustomers() {
+
         final List<CustomerEntity> foundCustomers = customerRepo.findAll();
         return foundCustomers.stream().map(customer -> customerEntityToCustomer(customer)).collect(Collectors.toList());
     }
@@ -49,11 +52,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepo.findById(id)
                 .map(customerEntity -> customerEntityToCustomer(customerEntity))
                 .orElseThrow(() -> new NoSuchCustomerException("Customer with id: " + id + " doesn't exist"));
-        /*
-        final Optional<CustomerEntity> foundCustomer = customerRepo.findById(id);
-        return foundCustomer.map(customer -> customerEntityToCustomer(customer));
-         */
-
     }
 
     //UPDATE
@@ -91,6 +89,8 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .ssn(customer.getSsn())
+                .created(LocalDateTime.now())
+                .lastUpdated(LocalDateTime.now())
                 .build();
     }
 
@@ -100,6 +100,8 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(customerEntity.getFirstName())
                 .lastName(customerEntity.getLastName())
                 .ssn(customerEntity.getSsn())
+                .created(customerEntity.getCreated())
+                .lastUpdated(customerEntity.getLastUpdated())
                 .build();
     }
 
