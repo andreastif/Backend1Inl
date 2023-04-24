@@ -70,7 +70,7 @@ public class CustomerController {
         final boolean exists = customerService.doesCustomerExist(customer);
         final Customer savedCustomer = customerService.save(customer);
 
-        EntityModel<Customer> entityModel = EntityModel.of(customer, linkTo(methodOn(CustomerController.class).retrieveCustomer(savedCustomer.getId())).withSelfRel(),
+        EntityModel<Customer> entityModel = EntityModel.of(savedCustomer, linkTo(methodOn(CustomerController.class).retrieveCustomer(savedCustomer.getId())).withSelfRel(),
                 linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-lists"));
 
         if (exists) {
@@ -79,7 +79,6 @@ public class CustomerController {
         }
 
         log.info("POST customer: {}", savedCustomer);
-        //savedCustomer.setCreated(LocalDateTime.now());
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
