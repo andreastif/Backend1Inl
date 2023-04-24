@@ -59,8 +59,22 @@ public class CustomerServiceImpl implements CustomerService {
     //UPDATE
     @Override
     public Customer save(Customer customer) {
-        final CustomerEntity customerEntity = customerToCustomerEntity(customer);
-        final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
+        boolean exist = customerRepo.existsById(customer.getId());
+
+        if(exist) {
+            final CustomerEntity customerEntity = customerToCustomerEntity(customer);
+            final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
+            return customerEntityToCustomer(savedCustomerEntity);
+        }
+
+        var updatedCustomerEntity = CustomerEntity.builder()
+                .lastUpdated(LocalDateTime.now())
+                .ssn(customer.getSsn())
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .build();
+
+        var savedCustomerEntity = customerRepo.save(updatedCustomerEntity);
 
         return customerEntityToCustomer(savedCustomerEntity);
     }
