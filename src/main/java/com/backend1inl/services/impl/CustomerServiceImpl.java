@@ -106,6 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .ssn(customer.getSsn())
+                .created(customer.getCreated())
                 .lastUpdated(LocalDateTime.now())
                 .build();
     }
