@@ -16,7 +16,15 @@ import lombok.NoArgsConstructor;
 public class Customer {
 
     private Long id;
+
+    @NotEmpty(message = "First Name Is Mandatory")
+    @Size(min = 3, message = "At least 3 Letters for first name")
+    @Pattern(regexp="^[A-Öa-ö]*$", message = "Only Letters for first name")
     private String firstName;
+
+    @NotEmpty(message = "Last name is mandatory.")
+    @Size(min = 3, message = "At least 3 Letters for last name")
+    @Pattern(regexp="^[A-Öa-ö]*$",message = "Only Letters for first name")
     private String lastName;
 
     @NotEmpty(message = "Social security number is mandatory.")

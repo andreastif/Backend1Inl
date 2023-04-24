@@ -11,7 +11,7 @@ public interface CustomerService {
 
     List<Customer> listCustomers();
 
-    Optional<Customer> findCustomerById(Long id);
+    Customer findCustomerById(Long id);
 
     Customer create (Customer customer);
 

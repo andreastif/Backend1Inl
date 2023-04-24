@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 public class ErrorDetails {
     private LocalDateTime timeStamp;
     private String message;
-    private String details; /// ghasdgasg
+    private String details;
 }

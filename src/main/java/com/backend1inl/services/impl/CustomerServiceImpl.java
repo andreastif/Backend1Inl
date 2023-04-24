@@ -2,6 +2,7 @@ package com.backend1inl.services.impl;
 
 import com.backend1inl.domain.Customer;
 import com.backend1inl.domain.CustomerEntity;
+import com.backend1inl.exception.NoSuchCustomerException;
 import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.services.CustomerService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +42,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<Customer> findCustomerById(Long id) {
+    public Customer findCustomerById(Long id) {
+
+        return customerRepo.findById(id)
+                .map(customerEntity -> customerEntityToCustomer(customerEntity))
+                .orElseThrow(() -> new NoSuchCustomerException("Customer with id: " + id + " doesn't exist"));
+        /*
         final Optional<CustomerEntity> foundCustomer = customerRepo.findById(id);
         return foundCustomer.map(customer -> customerEntityToCustomer(customer));
+         */
 
     }
 
