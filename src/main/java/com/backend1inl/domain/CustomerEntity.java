@@ -7,18 +7,19 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-@Data
+import java.util.Objects;
+
+@Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
-@Entity
 @Table(name = "Customer")
 public class CustomerEntity {
 
@@ -41,6 +42,19 @@ public class CustomerEntity {
     private String ssn;
 
 
-    private LocalDateTime created;
-    private LocalDateTime lastUpdated;
+    private LocalDate created;
+    private LocalDate lastUpdated;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerEntity that = (CustomerEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(ssn, that.ssn) && Objects.equals(created, that.created) && Objects.equals(lastUpdated, that.lastUpdated);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, ssn, created, lastUpdated);
+    }
 }

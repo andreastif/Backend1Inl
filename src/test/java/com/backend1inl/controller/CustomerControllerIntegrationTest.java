@@ -1,8 +1,6 @@
 package com.backend1inl.controller;
 
 import com.backend1inl.TestData;
-import com.backend1inl.domain.Customer;
-import com.backend1inl.domain.CustomerEntity;
 import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.services.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -80,7 +78,6 @@ public class CustomerControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].ssn").value(targetEntity.getSsn()));
     }
 
-    // TODO.. retrieveCustomer(), delete() update()/Create customer beroende på va sigge säger
 
     @Test
     public void testThatRetrieveCustomerReturns404WhenNotFound() throws Exception {
@@ -103,31 +100,15 @@ public class CustomerControllerIntegrationTest {
     }
 
 
+    // TODO.. retrieveCustomer(), delete() update()/Create customer beroende på va sigge säger
     @Test
     public void testThatSaveCustomerReturns201() throws Exception {
         String url = "/customers";
 
-        /*
-        var customerEntity = CustomerEntity.builder()
-                .id(1L)
-                .lastName("testsson")
-                .firstName("testaren")
-                .ssn("9108233876")
-                .lastUpdated(LocalDateTime.now())
-                .created(LocalDateTime.now())
-                .build();
+        var testEntity = TestData.testCustomerEntity();
+        var testDTO = TestData.testCustomerDTO();
 
-        var testDto = TestData.testCustomerDTONoId();
-
-        when(mockRepo.save(customerEntity)).thenReturn(customerEntity);
-
-        var savedDTO = customerService.create(testDto);
-
-         */
-
-        var testDTO = TestData.testCustomerDTONoId();
-
-        var savedDTO = customerService.create(testDTO);
+        when(mockRepo.save(testEntity)).thenReturn(testEntity);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule()); // Dependency for serializing LocalDateTime
@@ -137,6 +118,24 @@ public class CustomerControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(customerJSON))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.id").value(testDTO.getId())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.firstName").value(testDTO.getFirstName())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.lastName").value(testDTO.getLastName())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.created").value(testDTO.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.lastUpdated").value(testDTO.getLastUpdated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.ssn").value(testDTO.getSsn())
+                );
     }
 }
