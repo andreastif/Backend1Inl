@@ -73,15 +73,8 @@ public class CustomerServiceImpl implements CustomerService {
             return customerEntityToCustomer(savedCustomerEntity);
         }
 
-        var customerEntityToUpdate = CustomerEntity.builder()
-                .lastUpdated(LocalDateTime.now())
-                .ssn(customer.getSsn())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .created(LocalDateTime.now())
-                .build();
-
-        var savedCustomerEntity = customerRepo.save(customerEntityToUpdate);
+        var entityToSave = customerToCustomerEntity(customer);
+        var savedCustomerEntity = customerRepo.save(entityToSave);
 
         return customerEntityToCustomer(savedCustomerEntity);
     }

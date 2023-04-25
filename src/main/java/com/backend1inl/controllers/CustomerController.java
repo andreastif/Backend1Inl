@@ -30,7 +30,7 @@ public class CustomerController {
     }
 
     //CREATE
-/*    @PostMapping
+    @PostMapping
     public ResponseEntity<EntityModel<Customer>> createCustomer(@Valid @RequestBody final Customer customer) {
         final Customer savedCustomer = customerService.create(customer);
 
@@ -41,8 +41,8 @@ public class CustomerController {
 
         log.info("Created new customer with id {}", savedCustomer.getId());
 
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
-    }*/
+        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
+    }
 
     //READ
     @GetMapping

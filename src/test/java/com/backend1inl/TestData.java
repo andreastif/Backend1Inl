@@ -31,6 +31,17 @@ public class TestData {
                 .build();
     }
 
+    public static Customer testCustomerDTONoId() {
+        return Customer.builder()
+                .id(1L)
+                .created(LocalDateTime.now())
+                .lastUpdated(LocalDateTime.now())
+                .firstName("Test")
+                .lastName("Test")
+                .ssn("9108233876")
+                .build();
+    }
+
     public static List<CustomerEntity> listOfCustomerEntities() {
         return Arrays.asList(
                 testCustomerEntity()
