@@ -26,7 +26,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-/*
     //CREATE
     @Override
     public Customer create(Customer customer) {
@@ -36,7 +35,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customerEntityToCustomer(savedCustomerEntity);
     }
-*/
 
 
     //READ
@@ -54,6 +52,8 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(customerEntity -> customerEntityToCustomer(customerEntity))
                 .orElseThrow(() -> new NoSuchCustomerException("Customer with id: " + id + " doesn't exist"));
     }
+
+
 
     //UPDATE
     @Override
