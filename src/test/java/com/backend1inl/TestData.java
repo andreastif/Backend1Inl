@@ -4,6 +4,8 @@ import com.backend1inl.domain.Customer;
 import com.backend1inl.domain.CustomerEntity;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 public class TestData {
 
@@ -27,5 +29,11 @@ public class TestData {
                 .lastName("Test")
                 .ssn("9108233876")
                 .build();
+    }
+
+    public static List<CustomerEntity> listOfCustomerEntities() {
+        return Arrays.asList(
+                testCustomerEntity()
+        );
     }
 }
