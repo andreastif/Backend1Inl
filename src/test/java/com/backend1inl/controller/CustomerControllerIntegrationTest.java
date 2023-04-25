@@ -33,9 +33,6 @@ public class CustomerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private CustomerService customerService;
-
     @MockBean
     private CustomerRepository mockRepo;
 
@@ -90,12 +87,22 @@ public class CustomerControllerIntegrationTest {
     @Test
     public void testThatRetrieveCustomerReturnsHttp200WhenCustomerExists() throws Exception {
         var testEntity = TestData.testCustomerEntity();
+        var testDto = TestData.testCustomerDTO();
+
         when(mockRepo.findById(testEntity.getId())).thenReturn(Optional.of(testEntity));
 
         String url = "/customers/" + testEntity.getId();
+
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                // kollar av några av props
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.id").value(testDto.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.firstName").value(testDto.getFirstName()))
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.lastName").value(testDto.getLastName()));
 
     }
 
