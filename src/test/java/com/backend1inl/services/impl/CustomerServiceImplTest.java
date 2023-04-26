@@ -2,23 +2,22 @@ package com.backend1inl.services.impl;
 
 
 import com.backend1inl.TestData;
-import com.backend1inl.domain.Customer;
 import com.backend1inl.repositories.CustomerRepository;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
 
 import java.util.Arrays;
-import java.util.Optional;
+
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.mockito.Mockito.*;
 
 
@@ -32,20 +31,20 @@ public class CustomerServiceImplTest {
     private CustomerServiceImpl underTest;
 
 
-    /* Denna är CP  funkar ej just nu
+
     @Test
     public void testThatCustomerIsSaved() {
         var testDTO = TestData.testCustomerDTO();
         var testEntity = TestData.testCustomerEntity();
 
-        lenient().when(customerRepository.save(testEntity)).thenReturn(testEntity);
+        when(customerRepository.save(testEntity)).thenReturn(testEntity);
 
         var savedDTO = underTest.create(testDTO);
 
         assertThat(savedDTO)
                 .isEqualTo(testDTO);
     }
-     */
+
 
     @Test
     public void testGetAllCustomersReturnsCorrectSize() {

@@ -4,16 +4,16 @@ package com.backend1inl.domain;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 public class Customer {
 
@@ -33,7 +33,19 @@ public class Customer {
     @Size(min = 10, max = 12, message = "Social security number needs to be 10 or 12 digits")
     private String ssn;
 
-    private LocalDateTime created;
-    private LocalDateTime lastUpdated;
+    private LocalDate created;
+    private LocalDate lastUpdated;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) && Objects.equals(firstName, customer.firstName) && Objects.equals(lastName, customer.lastName) && Objects.equals(ssn, customer.ssn) && Objects.equals(created, customer.created) && Objects.equals(lastUpdated, customer.lastUpdated);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, ssn, created, lastUpdated);
+    }
 }

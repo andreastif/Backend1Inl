@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,11 +29,11 @@ public class CustomerServiceImpl implements CustomerService {
     //CREATE
     @Override
     public Customer create(Customer customer) {
+        customer.setCreated(LocalDate.now());
+        customer.setLastUpdated(LocalDate.now());
 
-        final CustomerEntity customerEntity = customerToCustomerEntity(customer);
-        final CustomerEntity savedCustomerEntity = customerRepo.save(customerEntity);
-
-        return customerEntityToCustomer(savedCustomerEntity);
+        var savedEntity = customerRepo.save(customerToCustomerEntity(customer));
+        return customerEntityToCustomer(savedEntity);
     }
 
 
@@ -61,7 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(exist) {
             Customer match = findCustomerById(customer.getId());
 
-            match.setLastUpdated(LocalDateTime.now());
+            match.setLastUpdated(LocalDate.now());
             match.setSsn(customer.getSsn());
             match.setLastName(customer.getLastName());
             match.setFirstName(customer.getFirstName());
@@ -102,7 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastName(customer.getLastName())
                 .ssn(customer.getSsn())
                 .created(customer.getCreated())
-                .lastUpdated(LocalDateTime.now())
+                .lastUpdated(customer.getLastUpdated())
                 .build();
     }
 
