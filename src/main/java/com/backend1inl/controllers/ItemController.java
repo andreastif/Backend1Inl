@@ -3,6 +3,7 @@ package com.backend1inl.controllers;
 import com.backend1inl.domain.Item;
 import com.backend1inl.services.ItemService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +20,6 @@ import java.util.Optional;
 @RequestMapping("/items")
 public class ItemController {
 
-    //TODO: SAKNAR VERIFIKATION (VALID)
     //TODO: SAKNAR INTEGRATIONSTEST
     //TODO: SAKNAR HATEOAS
 
@@ -59,14 +59,14 @@ public class ItemController {
 
     //create new items
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Item> createNewItemEntity(@RequestPart String itemString, @RequestPart MultipartFile file) throws IOException {
+    public ResponseEntity<Item> createNewItemEntity(@Valid @RequestPart String itemString, @RequestPart MultipartFile file) throws IOException {
         Item savedItem = itemService.createNewItemEntity(itemService.stringItemToJson(itemString), file);
         return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
     }
 
     //update existing item
     @PutMapping(value="/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> updateItemEntityById(@RequestPart String itemString, @RequestPart MultipartFile file, @PathVariable Long id) throws IOException {
+    public ResponseEntity<?> updateItemEntityById(@Valid @RequestPart String itemString, @RequestPart MultipartFile file, @PathVariable Long id) throws IOException {
         Optional<Item> isFoundItem = itemService.findItemEntityById(id);
 
         if (isFoundItem.isPresent()) {
@@ -74,13 +74,17 @@ public class ItemController {
             return new ResponseEntity<>(savedItem, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("The specified item does not exist",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("The specified item does not exist" , HttpStatus.BAD_REQUEST);
     }
 
     //update price
     @PutMapping(value="/{id}/price")
     public ResponseEntity<?> updateItemEntityPriceById(@RequestBody Long price ,@PathVariable Long id) {
         Optional<Item> isFoundItem = itemService.findItemEntityById(id);
+
+        if (price < 1L) {
+            return new ResponseEntity<>("Item price cannot be below 1", HttpStatus.BAD_REQUEST);
+        }
 
         if (isFoundItem.isPresent()) {
             Item updatedItem = itemService.updatePriceOfItemEntity(price, id);
@@ -96,6 +100,10 @@ public class ItemController {
     public ResponseEntity<?> updateItemEntityNameById(@RequestBody String name ,@PathVariable Long id) {
         Optional<Item> isFoundItem = itemService.findItemEntityById(id);
 
+        if (name == null || name.isEmpty() || name.isBlank()) {
+            return new ResponseEntity<>("Invalid name", HttpStatus.BAD_REQUEST);
+        }
+
         if (isFoundItem.isPresent()) {
             Item updatedItem = itemService.updateNameOfItemEntity(name, id);
 
@@ -107,11 +115,15 @@ public class ItemController {
 
     //update saldo
     @PutMapping(value="/{id}/saldo")
-    public ResponseEntity<?> updateItemEntitySaldoById(@RequestBody Long price ,@PathVariable Long id) {
+    public ResponseEntity<?> updateItemEntitySaldoById(@RequestBody Long saldo ,@PathVariable Long id) {
         Optional<Item> isFoundItem = itemService.findItemEntityById(id);
 
+        if (saldo < 1L) {
+            return new ResponseEntity<>("Item saldo cannot be below 1", HttpStatus.BAD_REQUEST);
+        }
+
         if (isFoundItem.isPresent()) {
-            Item updatedItem = itemService.updateSaldoOfItemEntity(price, id);
+            Item updatedItem = itemService.updateSaldoOfItemEntity(saldo, id);
 
             return new ResponseEntity<>(updatedItem, HttpStatus.OK);
         }

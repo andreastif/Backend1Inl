@@ -1,12 +1,14 @@
 package com.backend1inl.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+
 
 @Entity
 @Getter
@@ -23,8 +25,13 @@ public class ItemEntity {
     @Id
     @GeneratedValue
     private Long id;
+    @NotEmpty
+    @NotBlank
+    @Size(min = 1)
     private String name;
+    @Min(1L)
     private Long price;
+    @Min(0L)
     private Long saldo;
     private LocalDateTime created;
     private LocalDateTime lastUpdated;
