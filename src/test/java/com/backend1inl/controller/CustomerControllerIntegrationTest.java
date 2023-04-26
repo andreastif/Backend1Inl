@@ -1,6 +1,7 @@
 package com.backend1inl.controller;
 
 import com.backend1inl.TestData;
+import com.backend1inl.exception.NoSuchCustomerException;
 import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.services.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -35,6 +37,9 @@ public class CustomerControllerIntegrationTest {
 
     @MockBean
     private CustomerRepository mockRepo;
+
+    @MockBean
+    CustomerService mockService;
 
     @Test
     void testGetAllCustomersEndpointLives() throws Exception {
@@ -64,6 +69,8 @@ public class CustomerControllerIntegrationTest {
         var targetEntity = testDataList.get(0);
 
         when(mockRepo.findAll()).thenReturn(testDataList);
+        when(mockService.listCustomers()).thenReturn(Arrays.asList(TestData.testCustomerDTO()));
+
 
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andDo(print())
@@ -79,6 +86,7 @@ public class CustomerControllerIntegrationTest {
     @Test
     public void testThatRetrieveCustomerReturns404WhenNotFound() throws Exception {
         String url = "/customers/99";
+        when(mockService.findCustomerById(99L)).thenThrow(NoSuchCustomerException.class);
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -90,6 +98,7 @@ public class CustomerControllerIntegrationTest {
         var testDto = TestData.testCustomerDTO();
 
         when(mockRepo.findById(testEntity.getId())).thenReturn(Optional.of(testEntity));
+        when(mockService.findCustomerById(testEntity.getId())).thenReturn(testDto);
 
         String url = "/customers/" + testEntity.getId();
 
@@ -109,21 +118,28 @@ public class CustomerControllerIntegrationTest {
 
     // TODO.. retrieveCustomer(), delete() update()/Create customer beroende på va sigge säger
     @Test
-    public void testThatSaveCustomerReturns201() throws Exception {
+    public void testThatCreateCustomerCreatesNewCustomer201() throws Exception {
         String url = "/customers";
 
         var testEntity = TestData.testCustomerEntity();
         var testDTO = TestData.testCustomerDTO();
 
+//        when(mockRepo.existsById(testEntity.getId())).thenReturn(true);
+//        when(mockService.doesCustomerExist(testDTO)).thenReturn(true);
+//        when(mockService.findCustomerById(testDTO.getId())).thenReturn(testDTO);
+//        when(mockRepo.findById(testEntity.getId())).thenReturn(Optional.of(testEntity));
         when(mockRepo.save(testEntity)).thenReturn(testEntity);
+        when(mockService.create(testDTO)).thenReturn(testDTO);
+
+
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule()); // Dependency for serializing LocalDateTime
         String customerJSON = mapper.writeValueAsString(testDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(customerJSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(customerJSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -145,4 +161,86 @@ public class CustomerControllerIntegrationTest {
                         "$.ssn").value(testDTO.getSsn())
                 );
     }
+
+    @Test
+    public void testThatUpdateExistingCustomerReturns200() throws Exception {
+        String url = "/customers";
+
+        var testEntity = TestData.testCustomerEntity();
+        var testDTO = TestData.testCustomerDTO();
+
+        // Här mockar vi en DTO/ENTITY och sparar till mockad databas.
+        when(mockService.create(testDTO)).thenReturn(testDTO);
+        when(mockRepo.save(testEntity)).thenReturn(testEntity);
+        var savedDTO = mockService.create(testDTO);
+
+
+        // Här uppdaterar vi kunden med ett nytt förnamn.
+        savedDTO.setFirstName("Testeru");
+
+        // Här mockar vi alla steg som krävs för service.save-metoden
+        when(mockRepo.existsById(testEntity.getId())).thenReturn(true);
+        when(mockService.doesCustomerExist(testDTO)).thenReturn(true);
+        when(mockService.findCustomerById(testDTO.getId())).thenReturn(testDTO);
+        when(mockRepo.findById(testEntity.getId())).thenReturn(Optional.of(testEntity));
+        when(mockService.save(savedDTO)).thenReturn(savedDTO);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule()); // Dependency for serializing LocalDate
+        String customerJSON = mapper.writeValueAsString(testDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(customerJSON))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.id").value(savedDTO.getId())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.firstName").value(savedDTO.getFirstName())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.lastName").value(savedDTO.getLastName())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.created").value(savedDTO.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.lastUpdated").value(savedDTO.getLastUpdated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.ssn").value(savedDTO.getSsn())
+                );
+    }
+
+    @Test
+    public void testDeleteCustomerThatDoesntExistReturns200WithDeleteResponseFalse() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/customers/497984739827"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.deleted").value(false));
+    }
+
+    @Test
+    public void testDeleteCustomerThatExistsReturns200WithDeleteResponseTrue() throws Exception {
+
+        String url = "/customers/";
+
+        var testEntity = TestData.testCustomerEntity();
+        var testDTO = TestData.testCustomerDTO();
+
+        when(mockRepo.save(testEntity)).thenReturn(testEntity);
+        when(mockService.save(testDTO)).thenReturn(testDTO);
+
+        var target = mockService.save(testDTO);
+
+        when(mockService.deleteCustomerById(target.getId())).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(url + target.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.deleted").value(true));
+    }
+
 }
