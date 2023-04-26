@@ -18,6 +18,8 @@ import java.util.Objects;
 @Table(name = "Item")
 public class ItemEntity {
 
+    //TODO: SAKNAR MAPPINGS
+
     @Id
     @GeneratedValue
     private Long id;

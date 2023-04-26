@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface ItemService {
 
-    Item saveItem(Item item, MultipartFile file) throws IOException;
+    Item createNewItemEntity(Item item, MultipartFile file) throws IOException;
 
     Item stringItemToJson(String itemString) throws JsonProcessingException;
 
@@ -21,7 +21,7 @@ public interface ItemService {
 
     Optional<byte[]> findItemImageById(Long id);
 
-    Optional<Item> findItemById(Long id);
+    Optional<Item> findItemEntityById(Long id);
 
     ItemEntity itemToItemEntity(Item item, MultipartFile file) throws IOException;
 
@@ -29,8 +29,13 @@ public interface ItemService {
 
     String itemURIBuilder(Long id);
 
-    void deleteImageEntityById(Long id);
+    void deleteItemEntityById(Long id);
 
+    Item updateItemEntity(Item item, MultipartFile file, Long id) throws IOException;
 
+    Item updatePriceOfItemEntity(Long price, Long id);
 
+    Item updateNameOfItemEntity(String name, Long id);
+
+    Item updateSaldoOfItemEntity(Long price, Long id);
 }
