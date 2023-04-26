@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
+
 @Entity
 @Getter
 @Setter
@@ -26,6 +27,8 @@ public class OrderEntity {
     @JoinColumn(name = "customer_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CustomerEntity customerEntity;
+
+
 
     private LocalDate created;
     private LocalDate lastUpdated;
