@@ -21,6 +21,7 @@ public class ItemController {
 
     //TODO: SAKNAR VERIFIKATION (VALID)
     //TODO: SAKNAR INTEGRATIONSTEST
+    //TODO: SAKNAR HATEOAS
 
 
     private final ItemService itemService;
