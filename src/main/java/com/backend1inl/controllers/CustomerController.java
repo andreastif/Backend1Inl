@@ -88,18 +88,4 @@ public class CustomerController {
         return new ResponseEntity<>(new DeleteResponse(deleted), HttpStatus.OK);
     }
 
-    // TESTAR DENNA NU
-    @PostMapping("test")
-    public ResponseEntity<EntityModel<Customer>> addCustomer(@Valid @RequestBody Customer customer) {
-        // När vi post så får vi tbx en länk till resource som skapats.
-        Customer savedCustomer = customerService.create(customer);
-
-        EntityModel<Customer> entityModel = EntityModel.of(savedCustomer,
-                linkTo(methodOn(CustomerController.class).retrieveCustomer(savedCustomer.getId())).withSelfRel(),
-                linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-customers"));
-
-        log.info("POST customer: {}", savedCustomer);
-
-        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
-    }
 }

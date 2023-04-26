@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 
@@ -59,7 +60,33 @@ public class CustomerServiceImplTest {
                 .hasSize(1);
     }
 
+    @Test
+    public void testDeleteCustomerDeletesCustomer() {
+        var testDTO = TestData.testCustomerDTO();
+        var testEntity = TestData.testCustomerEntity();
 
+        when(customerRepository.save(testEntity)).thenReturn(testEntity);
+        var savedDTO = underTest.create(testDTO);
+
+        underTest.deleteCustomerById(savedDTO.getId());
+        var allDtos = underTest.listCustomers();
+
+        assertThat(allDtos)
+                .isEmpty();
+    }
+
+    @Test
+    public void testDoesCustomerExistsReturnsTrueWhenCustomerDoesntExist() {
+        var testDTO = TestData.testCustomerDTO();
+        var testEntity = TestData.testCustomerEntity();
+
+        when(customerRepository.save(testEntity)).thenReturn(testEntity);
+        var savedDTO = underTest.create(testDTO);
+
+        when(customerRepository.existsById(any())).thenReturn(true);
+        final boolean result = underTest.doesCustomerExist(savedDTO);
+        assertEquals(true, result);
+    }
 
 }
 
