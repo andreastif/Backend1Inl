@@ -1,10 +1,12 @@
 package com.backend1inl.exception;
 
 
+import jakarta.transaction.TransactionalException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +29,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(details, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //Custom exception for failed JPA validation
+    @ExceptionHandler(TransactionSystemException.class)
+    public final ResponseEntity<ErrorDetails> handleTransactionSystemException(Exception ex, WebRequest request) {
+        // Our own custom exception object
+        ErrorDetails details = ErrorDetails.builder()
+                .timeStamp(LocalDateTime.now())
+                .message("The data that has been passed is not be valid. Please try again. Check API documentation for full information on valid parameters.")
+                .details(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
     }
 
 

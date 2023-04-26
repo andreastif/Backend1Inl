@@ -23,6 +23,8 @@ import java.util.Optional;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
+    //TODO: SAKNAR ENHETSTESTER
+
     private final ItemRepository itemRepository;
 
     @Autowired
@@ -31,10 +33,71 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item saveItem(Item item, MultipartFile file) throws IOException {
+    public Item createNewItemEntity(Item item, MultipartFile file) throws IOException {
         ItemEntity itemEntityToBeSaved = itemToItemEntity(item, file);
+
+        itemEntityToBeSaved.setCreated(LocalDateTime.now());
+        itemEntityToBeSaved.setLastUpdated(LocalDateTime.now());
+
         ItemEntity savedItemEntity = itemRepository.save(itemEntityToBeSaved);
         return itemEntityToItem(savedItemEntity);
+    }
+
+    @Override
+    public Item updateItemEntity(Item item, MultipartFile file, Long id) throws IOException {
+
+        /*
+        Flödesbeskrivning:
+        För att konsumenten av APIN skall kunna uppdatera ett item sker följande:
+        1a. Konsumenten anropar updateItemEntityById i Controllern.
+        1b. Om Item EJ är skapat returneras Bad Request. Du KAN EJ uppdatera ett item som _INTE_ finns.
+        1c. Om Item FINNS:
+        1d. APIt skall ha serverat ut all befintlig data till konsumenten och förpopulerar alla inputfält enligt befintlig data.
+        1e. Det är nu upp till konsumenten att välja vilken information som skall skickas tillbaka (nytt pris, ny bild, nytt namn, nytt saldo)
+        antingen med det som redan är förpopulerat eller med helt nya värden.
+        2. Eftersom vi FÖRUTSÄTTER att KORREKT och RIKTIG data skickas från konsumenten tillbaka till APIt innebär det att vi kan använda GETTERS på alla
+        världen som kan uppdateras (namn, pris, saldo).
+         */
+
+        var itemFromDB = findItemEntityById(id).get();
+
+        ItemEntity itemEntityToBeSaved = itemToItemEntity(itemFromDB, file);
+
+        itemEntityToBeSaved.setId(itemFromDB.getId());
+
+        itemEntityToBeSaved.setName(item.getName());
+        itemEntityToBeSaved.setPrice(item.getPrice());
+        itemEntityToBeSaved.setSaldo(item.getSaldo());
+        itemEntityToBeSaved.setCreated(itemFromDB.getCreated());
+        itemEntityToBeSaved.setLastUpdated(LocalDateTime.now());
+
+        ItemEntity savedItemEntity = itemRepository.save(itemEntityToBeSaved);
+
+        return itemEntityToItem(savedItemEntity);
+    }
+
+    @Override
+    public Item updatePriceOfItemEntity(Long price, Long id) {
+        ItemEntity itemFromDB = itemRepository.findById(id).get();
+        itemFromDB.setPrice(price);
+        itemFromDB.setLastUpdated(LocalDateTime.now());
+        return itemEntityToItem(itemRepository.save(itemFromDB));
+    }
+
+    @Override
+    public Item updateNameOfItemEntity(String name, Long id) {
+        ItemEntity itemFromDB = itemRepository.findById(id).get();
+        itemFromDB.setName(name);
+        itemFromDB.setLastUpdated(LocalDateTime.now());
+        return itemEntityToItem(itemRepository.save(itemFromDB));
+    }
+
+    @Override
+    public Item updateSaldoOfItemEntity(Long saldo, Long id) {
+        ItemEntity itemFromDB = itemRepository.findById(id).get();
+        itemFromDB.setSaldo(saldo);
+        itemFromDB.setLastUpdated(LocalDateTime.now());
+        return itemEntityToItem(itemRepository.save(itemFromDB));
     }
 
     @Override
@@ -55,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Optional<Item> findItemById(Long id) {
+    public Optional<Item> findItemEntityById(Long id) {
         var fetchedItemEntity = itemRepository.findById(id);
         return fetchedItemEntity.map(this::itemEntityToItem);
     }
@@ -68,8 +131,6 @@ public class ItemServiceImpl implements ItemService {
                     .price(item.getPrice())
                     .saldo(item.getSaldo())
                     .imgData(ItemImageUtils.compressImage(file.getBytes()))
-                    .created(LocalDateTime.now())
-                    .lastUpdated(LocalDateTime.now())
                     .build();
     }
 
@@ -89,13 +150,14 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public void deleteImageEntityById(Long id) {
+    public void deleteItemEntityById(Long id) {
         try {
             itemRepository.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             log.debug("Attempted to delete non-existing item", ex);
         }
     }
+
 
     @Override
     public String itemURIBuilder(Long id) {
