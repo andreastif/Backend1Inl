@@ -53,8 +53,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new NoSuchCustomerException("Customer with id: " + id + " doesn't exist"));
     }
 
-
-
     //UPDATE
     @Override
     public Customer save(Customer customer) {
@@ -78,8 +76,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customerEntityToCustomer(savedCustomerEntity);
     }
-
-
 
     //DELETE
     @Override
