@@ -28,8 +28,6 @@ public class OrderEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CustomerEntity customerEntity;
 
-
-
     private LocalDate created;
     private LocalDate lastUpdated;
 }
