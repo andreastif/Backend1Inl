@@ -1,9 +1,6 @@
 package com.backend1inl.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -12,6 +9,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,7 +18,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @ToString
 @Builder
-@Table(name = "Customer")
+@Table(name = "Customers")
 public class CustomerEntity {
 
     @Id
@@ -41,6 +39,8 @@ public class CustomerEntity {
     @Size(min = 10, max = 12, message = "Social security number needs to be 10 or 12 digits")
     private String ssn;
 
+    @OneToMany(mappedBy = "customerEntity")
+    private Set<OrderEntity> orders;
 
     private LocalDate created;
     private LocalDate lastUpdated;
