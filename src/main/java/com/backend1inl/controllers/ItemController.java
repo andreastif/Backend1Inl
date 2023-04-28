@@ -92,6 +92,7 @@ public class ItemController {
     }
 
     //update name
+    // TODO Skapa NoSuchOrderException + NoSuchItemException, så slipper vi ha isPresent()
     @PutMapping(value="/{id}/name")
     public ResponseEntity<?> updateItemEntityNameById(@RequestBody String name ,@PathVariable Long id) {
         Optional<Item> isFoundItem = itemService.findItemEntityById(id);
