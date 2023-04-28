@@ -1,6 +1,7 @@
 package com.backend1inl.controllers;
 
 import com.backend1inl.domain.Item;
+import com.backend1inl.exception.NoSuchItemException;
 import com.backend1inl.services.ItemService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/items")
@@ -36,14 +37,14 @@ public class ItemController {
     //get one item
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItem(@PathVariable Long id) {
-        return itemService.findItemEntityById(id).map(item -> new ResponseEntity<>(item, HttpStatus.OK)).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return itemService.findItemEntityById(id).map(item -> new ResponseEntity<>(item, HttpStatus.OK)).orElseThrow(() -> new NoSuchItemException("Item with id: " + id + " doesn't exist"));
     }
 
+    //TODO NICE TO HAVE: VALIDERA ATT DET ÄR EN JPEG/PNG SOM SKICKAS
     //get item image
     @GetMapping("/{id}/img")
     public ResponseEntity<byte[]> getItemImage(@PathVariable Long id) {
-        return itemService.findItemImageById(id).map(bytes -> ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(bytes))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return itemService.findItemImageById(id).map(bytes -> ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(bytes)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     //delete item by id
@@ -61,67 +62,39 @@ public class ItemController {
     }
 
     //update existing item
-    @PutMapping(value="/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> updateItemEntityById(@Valid @RequestPart String itemString, @RequestPart MultipartFile file, @PathVariable Long id) throws IOException {
-        Optional<Item> isFoundItem = itemService.findItemEntityById(id);
 
-        if (isFoundItem.isPresent()) {
-            Item savedItem = itemService.updateItemEntity(itemService.stringItemToJson(itemString), file, id);
-            return new ResponseEntity<>(savedItem, HttpStatus.OK);
-        }
+        Item savedItem = itemService.updateItemEntity(itemService.stringItemToJson(itemString), file, id);
+        return new ResponseEntity<>(savedItem, HttpStatus.OK);
 
-        return new ResponseEntity<>("The specified item does not exist" , HttpStatus.BAD_REQUEST);
     }
 
     //update price
-    @PutMapping(value="/{id}/price")
-    public ResponseEntity<?> updateItemEntityPriceById(@RequestBody Long price ,@PathVariable Long id) {
-        Optional<Item> isFoundItem = itemService.findItemEntityById(id);
+    @PutMapping(value = "/{id}/price")
+    public ResponseEntity<?> updateItemEntityPriceById(@RequestBody Long price, @PathVariable Long id) {
 
-        if (price < 1L) {
-            return new ResponseEntity<>("Item price cannot be below 1", HttpStatus.BAD_REQUEST);
-        }
+        Item updatedItem = itemService.updatePriceOfItemEntity(price, id);
+        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
 
-        if (isFoundItem.isPresent()) {
-            Item updatedItem = itemService.updatePriceOfItemEntity(price, id);
-
-            return new ResponseEntity<>(updatedItem, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("The specified item does not exist", HttpStatus.BAD_REQUEST);
     }
 
     //update name
-    @PutMapping(value="/{id}/name")
-    public ResponseEntity<?> updateItemEntityNameById(@RequestBody String name ,@PathVariable Long id) {
-        Optional<Item> isFoundItem = itemService.findItemEntityById(id);
+    @PutMapping(value = "/{id}/name")
+    public ResponseEntity<?> updateItemEntityNameById(@RequestBody String name, @PathVariable Long id) {
 
-        if (name == null || name.isEmpty() || name.isBlank()) {
-            return new ResponseEntity<>("Invalid name", HttpStatus.BAD_REQUEST);
-        }
+        Item updatedItem = itemService.updateNameOfItemEntity(name, id);
+        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
 
-        if (isFoundItem.isPresent()) {
-            Item updatedItem = itemService.updateNameOfItemEntity(name, id);
-
-            return new ResponseEntity<>(updatedItem, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("The specified item does not exist", HttpStatus.BAD_REQUEST);
     }
 
     //update balance
-    // TODO SKITA I balance ?
-    @PutMapping(value="/{id}/balance")
-    public ResponseEntity<?> updateItemEntityBalanceById(@RequestBody Long balance ,@PathVariable Long id) {
-        Optional<Item> isFoundItem = itemService.findItemEntityById(id);
+    @PutMapping(value = "/{id}/balance")
+    public ResponseEntity<?> updateItemEntityBalanceById(@RequestBody Long balance, @PathVariable Long id) {
 
-        if (isFoundItem.isPresent()) {
             Item updatedItem = itemService.updateBalanceOfItemEntity(balance, id);
-
             return new ResponseEntity<>(updatedItem, HttpStatus.OK);
-        }
 
-        return new ResponseEntity<>("The specified item does not exist", HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -6,7 +6,7 @@ import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.Hibernate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,8 +31,8 @@ public class ItemEntity {
     @Min(1L)
     private Long price;
     private Long balance;
-    private LocalDateTime created;
-    private LocalDateTime lastUpdated;
+    private LocalDate created;
+    private LocalDate lastUpdated;
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     @JsonIgnore

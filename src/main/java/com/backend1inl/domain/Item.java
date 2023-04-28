@@ -1,7 +1,9 @@
 package com.backend1inl.domain;
 
 import lombok.*;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -16,8 +18,8 @@ public class Item {
     private String name;
     private Long price;
     private Long balance;
-    private LocalDateTime created;
-    private LocalDateTime lastUpdated;
+    private LocalDate created;
+    private LocalDate lastUpdated;
     private String URI;
 
 }

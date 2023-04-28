@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +36,8 @@ public class ItemServiceImpl implements ItemService {
     public Item createNewItemEntity(Item item, MultipartFile file) throws IOException {
         ItemEntity itemEntityToBeSaved = itemToItemEntity(item, file);
 
-        itemEntityToBeSaved.setCreated(LocalDateTime.now());
-        itemEntityToBeSaved.setLastUpdated(LocalDateTime.now());
+        itemEntityToBeSaved.setCreated(LocalDate.now());
+        itemEntityToBeSaved.setLastUpdated(LocalDate.now());
 
         ItemEntity savedItemEntity = itemRepository.save(itemEntityToBeSaved);
         return itemEntityToItem(savedItemEntity);
@@ -59,46 +59,70 @@ public class ItemServiceImpl implements ItemService {
         världen som kan uppdateras (namn, pris, balance).
          */
 
-        var itemFromDB = findItemEntityById(id).get();
+        var itemFromDB = findItemEntityById(id);
 
-        ItemEntity itemEntityToBeSaved = itemToItemEntity(itemFromDB, file);
+        if (itemFromDB.isEmpty()) {
+            throw new NoSuchItemException("The specified item does not exist");
+        } else {
+            ItemEntity itemEntityToBeSaved = itemToItemEntity(itemFromDB.get(), file);
 
-        itemEntityToBeSaved.setId(itemFromDB.getId());
+            itemEntityToBeSaved.setId(itemFromDB.get().getId());
 
-        itemEntityToBeSaved.setName(item.getName());
-        itemEntityToBeSaved.setPrice(item.getPrice());
-        itemEntityToBeSaved.setBalance(item.getBalance());
-        itemEntityToBeSaved.setCreated(itemFromDB.getCreated());
-        itemEntityToBeSaved.setLastUpdated(LocalDateTime.now());
+            itemEntityToBeSaved.setName(item.getName());
+            itemEntityToBeSaved.setPrice(item.getPrice());
+            itemEntityToBeSaved.setBalance(item.getBalance());
+            itemEntityToBeSaved.setCreated(itemFromDB.get().getCreated());
+            itemEntityToBeSaved.setLastUpdated(LocalDate.now());
 
-        ItemEntity savedItemEntity = itemRepository.save(itemEntityToBeSaved);
+            ItemEntity savedItemEntity = itemRepository.save(itemEntityToBeSaved);
 
-        return itemEntityToItem(savedItemEntity);
+            return itemEntityToItem(savedItemEntity);
+        }
     }
 
     @Override
     public Item updatePriceOfItemEntity(Long price, Long id) {
-        ItemEntity itemFromDB = itemRepository.findById(id).get();
-        itemFromDB.setPrice(price);
-        itemFromDB.setLastUpdated(LocalDateTime.now());
-        return itemEntityToItem(itemRepository.save(itemFromDB));
+        if (price < 1L) {
+            throw new InvalidPriceException("Item price cannot be below 1");
+        } else if (itemRepository.findById(id).isEmpty()) {
+            throw new NoSuchItemException("Specified item could not be found");
+        } else {
+            ItemEntity itemFromDB = itemRepository.findById(id).get();
+            itemFromDB.setPrice(price);
+            itemFromDB.setLastUpdated(LocalDate.now());
+            return itemEntityToItem(itemRepository.save(itemFromDB));
+        }
     }
 
     @Override
     public Item updateNameOfItemEntity(String name, Long id) {
-        ItemEntity itemFromDB = itemRepository.findById(id).get();
-        itemFromDB.setName(name);
-        itemFromDB.setLastUpdated(LocalDateTime.now());
-        return itemEntityToItem(itemRepository.save(itemFromDB));
+
+        if (name == null || name.isEmpty() || name.isBlank()) {
+            throw new InvalidItemNameException("The name cannot be null, empty or blank!");
+        }
+        if (itemRepository.findById(id).isEmpty()) {
+            throw new NoSuchItemException("Specified item could not be found");
+        }
+        {
+            ItemEntity itemFromDB = itemRepository.findById(id).get();
+            itemFromDB.setName(name);
+            itemFromDB.setLastUpdated(LocalDate.now());
+            return itemEntityToItem(itemRepository.save(itemFromDB));
+        }
     }
 
     // TODO Skita i balance ?
     @Override
     public Item updateBalanceOfItemEntity(Long balance, Long id) {
-        ItemEntity itemFromDB = itemRepository.findById(id).get();
-        itemFromDB.setBalance(balance);
-        itemFromDB.setLastUpdated(LocalDateTime.now());
-        return itemEntityToItem(itemRepository.save(itemFromDB));
+
+        if (itemRepository.findById(id).isEmpty()) {
+            throw new NoSuchItemException("Specified item could not be found");
+        } else {
+            ItemEntity itemFromDB = itemRepository.findById(id).get();
+            itemFromDB.setBalance(balance);
+            itemFromDB.setLastUpdated(LocalDate.now());
+            return itemEntityToItem(itemRepository.save(itemFromDB));
+        }
     }
 
     @Override
@@ -126,27 +150,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemEntity itemToItemEntity(Item item, MultipartFile file) throws IOException {
-            return ItemEntity
-                    .builder()
-                    .name(item.getName())
-                    .price(item.getPrice())
-                    .balance(item.getBalance())
-                    .imgData(ItemImageUtils.compressImage(file.getBytes()))
-                    .build();
+        return ItemEntity.builder().name(item.getName()).price(item.getPrice()).balance(item.getBalance()).imgData(ItemImageUtils.compressImage(file.getBytes())).build();
     }
 
     @Override
     public Item itemEntityToItem(ItemEntity itemEntity) {
-        return Item
-                .builder()
-                .id(itemEntity.getId())
-                .price(itemEntity.getPrice())
-                .balance(itemEntity.getBalance())
-                .created(itemEntity.getCreated())
-                .lastUpdated(itemEntity.getLastUpdated())
-                .URI(itemURIBuilder(itemEntity.getId()))
-                .name(itemEntity.getName())
-                .build();
+        return Item.builder().id(itemEntity.getId()).price(itemEntity.getPrice()).balance(itemEntity.getBalance()).created(itemEntity.getCreated()).lastUpdated(itemEntity.getLastUpdated()).URI(itemURIBuilder(itemEntity.getId())).name(itemEntity.getName()).build();
     }
 
 
@@ -162,11 +171,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public String itemURIBuilder(Long id) {
-        return ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/items/")
-                .path(String.valueOf(id))
-                .path("/img")
-                .toUriString();
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/items/").path(String.valueOf(id)).path("/img").toUriString();
     }
 }

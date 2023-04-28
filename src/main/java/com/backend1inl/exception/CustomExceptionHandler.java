@@ -1,7 +1,6 @@
 package com.backend1inl.exception;
 
 
-import jakarta.transaction.TransactionalException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -33,7 +32,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     //Custom exception for failed JPA validation
     @ExceptionHandler(TransactionSystemException.class)
-    public final ResponseEntity<ErrorDetails> handleTransactionSystemException(Exception ex, WebRequest request) {
+    public final ResponseEntity<ErrorDetails> handleTransactionSystemException(WebRequest request) {
         // Our own custom exception object
         ErrorDetails details = ErrorDetails.builder()
                 .timeStamp(LocalDateTime.now())
@@ -53,6 +52,26 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidPriceException.class)
+    public final ResponseEntity<ErrorDetails> handleInvalidPriceException(Exception ex, WebRequest request) {
+        ErrorDetails details = ErrorDetails.builder()
+                .timeStamp(LocalDateTime.now())
+                .message(ex.getMessage())
+                .details(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidItemNameException.class)
+    public final ResponseEntity<ErrorDetails> invalidItemNameException(Exception ex, WebRequest request) {
+        ErrorDetails details = ErrorDetails.builder()
+                .timeStamp(LocalDateTime.now())
+                .message(ex.getMessage())
+                .details(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
     }
 
     @Override
