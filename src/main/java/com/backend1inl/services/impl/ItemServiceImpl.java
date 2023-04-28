@@ -2,6 +2,9 @@ package com.backend1inl.services.impl;
 
 import com.backend1inl.domain.Item;
 import com.backend1inl.domain.ItemEntity;
+import com.backend1inl.exception.InvalidItemNameException;
+import com.backend1inl.exception.InvalidPriceException;
+import com.backend1inl.exception.NoSuchItemException;
 import com.backend1inl.repositories.ItemRepository;
 import com.backend1inl.services.ItemService;
 import com.backend1inl.utils.ItemImageUtils;
@@ -164,7 +167,7 @@ public class ItemServiceImpl implements ItemService {
         try {
             itemRepository.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
-            log.debug("Attempted to delete non-existing item", ex);
+            throw new NoSuchItemException("Specified item could not be found");
         }
     }
 

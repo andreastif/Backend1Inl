@@ -54,6 +54,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(NoSuchItemException.class)
+    public final ResponseEntity<ErrorDetails> handleNoSuchItemException(Exception ex, WebRequest request) {
+        ErrorDetails details = ErrorDetails.builder()
+                .timeStamp(LocalDateTime.now())
+                .message(ex.getMessage())
+                .details(request.getDescription(false))
+                .build();
+
+        return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(InvalidPriceException.class)
     public final ResponseEntity<ErrorDetails> handleInvalidPriceException(Exception ex, WebRequest request) {
         ErrorDetails details = ErrorDetails.builder()
