@@ -53,10 +53,10 @@ public class ItemServiceImpl implements ItemService {
         1b. Om Item EJ är skapat returneras Bad Request. Du KAN EJ uppdatera ett item som _INTE_ finns.
         1c. Om Item FINNS:
         1d. APIt skall ha serverat ut all befintlig data till konsumenten och förpopulerar alla inputfält enligt befintlig data.
-        1e. Det är nu upp till konsumenten att välja vilken information som skall skickas tillbaka (nytt pris, ny bild, nytt namn, nytt saldo)
+        1e. Det är nu upp till konsumenten att välja vilken information som skall skickas tillbaka (nytt pris, ny bild, nytt namn, nytt balance)
         antingen med det som redan är förpopulerat eller med helt nya värden.
         2. Eftersom vi FÖRUTSÄTTER att KORREKT och RIKTIG data skickas från konsumenten tillbaka till APIt innebär det att vi kan använda GETTERS på alla
-        världen som kan uppdateras (namn, pris, saldo).
+        världen som kan uppdateras (namn, pris, balance).
          */
 
         var itemFromDB = findItemEntityById(id).get();
@@ -67,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemEntityToBeSaved.setName(item.getName());
         itemEntityToBeSaved.setPrice(item.getPrice());
-        itemEntityToBeSaved.setSaldo(item.getSaldo());
+        itemEntityToBeSaved.setBalance(item.getBalance());
         itemEntityToBeSaved.setCreated(itemFromDB.getCreated());
         itemEntityToBeSaved.setLastUpdated(LocalDateTime.now());
 
@@ -92,10 +92,11 @@ public class ItemServiceImpl implements ItemService {
         return itemEntityToItem(itemRepository.save(itemFromDB));
     }
 
+    // TODO Skita i balance ?
     @Override
-    public Item updateSaldoOfItemEntity(Long saldo, Long id) {
+    public Item updateBalanceOfItemEntity(Long balance, Long id) {
         ItemEntity itemFromDB = itemRepository.findById(id).get();
-        itemFromDB.setSaldo(saldo);
+        itemFromDB.setBalance(balance);
         itemFromDB.setLastUpdated(LocalDateTime.now());
         return itemEntityToItem(itemRepository.save(itemFromDB));
     }
@@ -129,7 +130,7 @@ public class ItemServiceImpl implements ItemService {
                     .builder()
                     .name(item.getName())
                     .price(item.getPrice())
-                    .saldo(item.getSaldo())
+                    .balance(item.getBalance())
                     .imgData(ItemImageUtils.compressImage(file.getBytes()))
                     .build();
     }
@@ -140,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
                 .builder()
                 .id(itemEntity.getId())
                 .price(itemEntity.getPrice())
-                .saldo(itemEntity.getSaldo())
+                .balance(itemEntity.getBalance())
                 .created(itemEntity.getCreated())
                 .lastUpdated(itemEntity.getLastUpdated())
                 .URI(itemURIBuilder(itemEntity.getId()))

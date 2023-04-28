@@ -3,7 +3,7 @@ package com.backend1inl.services;
 import com.backend1inl.domain.Item;
 import com.backend1inl.domain.ItemEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.stereotype.Service;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -37,5 +37,5 @@ public interface ItemService {
 
     Item updateNameOfItemEntity(String name, Long id);
 
-    Item updateSaldoOfItemEntity(Long price, Long id);
+    Item updateBalanceOfItemEntity(Long price, Long id);
 }

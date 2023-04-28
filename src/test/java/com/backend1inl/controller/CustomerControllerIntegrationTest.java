@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("testmock") // har egen properties fil för tester
+@ActiveProfiles("dev") // har egen properties fil för tester
 public class CustomerControllerIntegrationTest {
 
     @Autowired
@@ -116,7 +116,6 @@ public class CustomerControllerIntegrationTest {
     }
 
 
-    // TODO.. retrieveCustomer(), delete() update()/Create customer beroende på va sigge säger
     @Test
     public void testThatCreateCustomerCreatesNewCustomer201() throws Exception {
         String url = "/customers";

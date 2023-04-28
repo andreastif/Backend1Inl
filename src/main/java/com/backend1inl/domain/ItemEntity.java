@@ -21,8 +21,6 @@ import java.util.Set;
 @Table(name = "Items")
 public class ItemEntity {
 
-    //TODO: SAKNAR MAPPINGS
-
     @Id
     @GeneratedValue
     private Long id;
@@ -32,14 +30,16 @@ public class ItemEntity {
     private String name;
     @Min(1L)
     private Long price;
-    @Min(0L)
-    private Long saldo;
+    private Long balance;
     private LocalDateTime created;
     private LocalDateTime lastUpdated;
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     @JsonIgnore
     private byte[] imgData;
+
+    @OneToMany(mappedBy = "itemEntity")
+    private Set<OrderItemEntity> orders;
 
 
     @Override

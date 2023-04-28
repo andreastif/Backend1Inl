@@ -2,7 +2,6 @@ package com.backend1inl.controllers;
 
 import com.backend1inl.domain.Item;
 import com.backend1inl.services.ItemService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,18 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/items")
 public class ItemController {
 
-    //TODO: SAKNAR INTEGRATIONSTEST
-    //TODO: SAKNAR HATEOAS
-
+    //TODO: SAKNAR UNIT + INTEGRATIONSTEST
 
     private final ItemService itemService;
 
@@ -113,30 +109,19 @@ public class ItemController {
         return new ResponseEntity<>("The specified item does not exist", HttpStatus.BAD_REQUEST);
     }
 
-    //update saldo
-    @PutMapping(value="/{id}/saldo")
-    public ResponseEntity<?> updateItemEntitySaldoById(@RequestBody Long saldo ,@PathVariable Long id) {
+    //update balance
+    // TODO SKITA I balance ?
+    @PutMapping(value="/{id}/balance")
+    public ResponseEntity<?> updateItemEntityBalanceById(@RequestBody Long balance ,@PathVariable Long id) {
         Optional<Item> isFoundItem = itemService.findItemEntityById(id);
 
-        if (saldo < 1L) {
-            return new ResponseEntity<>("Item saldo cannot be below 1", HttpStatus.BAD_REQUEST);
-        }
-
         if (isFoundItem.isPresent()) {
-            Item updatedItem = itemService.updateSaldoOfItemEntity(saldo, id);
+            Item updatedItem = itemService.updateBalanceOfItemEntity(balance, id);
 
             return new ResponseEntity<>(updatedItem, HttpStatus.OK);
         }
 
         return new ResponseEntity<>("The specified item does not exist", HttpStatus.BAD_REQUEST);
     }
-
-    //TODO: SKALL KOMBINERA CUSTOMER, ORDER OCH ITEM
-    //buy item
-    @PostMapping("/buy")
-    public ResponseEntity<?> buyItem(@RequestBody Object whatTheHellShouldBeInsideTheRequestBody) {
-        return new ResponseEntity<>("NEED TO IMPLEMENT THIS ENDPOINT COMBINE CUSTOMER, ORDER & ITEM", HttpStatus.NOT_FOUND);
-    }
-
 
 }

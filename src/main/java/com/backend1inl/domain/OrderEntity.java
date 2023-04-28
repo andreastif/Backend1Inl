@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Entity
@@ -30,4 +31,7 @@ public class OrderEntity {
 
     private LocalDate created;
     private LocalDate lastUpdated;
+
+    @OneToMany(mappedBy = "orderEntity")
+    private Set<OrderItemEntity> orders;
 }
