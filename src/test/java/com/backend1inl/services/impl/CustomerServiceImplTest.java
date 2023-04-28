@@ -76,14 +76,14 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void testDoesCustomerExistsReturnsTrueWhenCustomerDoesntExist() {
+    public void testDoesCustomerExistsReturnsTrueWhenCustomerExists() {
         var testDTO = TestData.testCustomerDTO();
         var testEntity = TestData.testCustomerEntity();
 
         when(customerRepository.save(testEntity)).thenReturn(testEntity);
         var savedDTO = underTest.create(testDTO);
 
-        when(customerRepository.existsById(any())).thenReturn(true);
+        when(customerRepository.existsById(savedDTO.getId())).thenReturn(true);
         final boolean result = underTest.doesCustomerExist(savedDTO);
         assertEquals(true, result);
     }
