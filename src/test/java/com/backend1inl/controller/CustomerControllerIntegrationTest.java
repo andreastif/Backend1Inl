@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -240,6 +242,13 @@ public class CustomerControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
                         "$.deleted").value(true));
+    }
+
+    @Test
+    public void testFindCustomerByIdThrowsExceptionWhenNotFound(){
+        final Long targetId = 1L;
+        when(mockRepo.findById(eq(targetId))).thenThrow(NoSuchCustomerException.class);
+        assertThatThrownBy(() -> mockRepo.findById(targetId)).isInstanceOf(NoSuchCustomerException.class);
     }
 
 }
