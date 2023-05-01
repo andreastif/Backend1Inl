@@ -75,6 +75,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoSuchOrderException.class)
+    public final ResponseEntity<ErrorDetails> handleNoSuchOrderException(Exception ex, WebRequest request) {
+        ErrorDetails details = ErrorDetails.builder()
+                .timeStamp(LocalDateTime.now())
+                .message(ex.getMessage())
+                .details(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(InvalidItemNameException.class)
     public final ResponseEntity<ErrorDetails> invalidItemNameException(Exception ex, WebRequest request) {
         ErrorDetails details = ErrorDetails.builder()

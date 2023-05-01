@@ -7,62 +7,28 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import com.backend1inl.TestData;
-import com.backend1inl.repositories.CustomerRepository;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 
 import static org.assertj.core.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.mockito.Mockito.*;
 
-import static org.assertj.core.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("dev") // har egen properties fil för tester
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceImplTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Mock //== Autowired (fast i testmiljö)
     private ItemRepository itemRepository;
 
     @InjectMocks //== Autowired (i testmiljö, för service)
-    ItemServiceImpl mockServiceImpl;
+    private ItemServiceImpl mockServiceImpl;
 
     @Test
     public void testThatFileCanBeUploadedToDb() throws Exception {

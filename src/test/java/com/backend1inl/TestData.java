@@ -1,16 +1,14 @@
 package com.backend1inl;
 
-import com.backend1inl.domain.Customer;
-import com.backend1inl.domain.CustomerEntity;
-import com.backend1inl.domain.Item;
-import com.backend1inl.domain.ItemEntity;
-import com.backend1inl.utils.ItemImageUtils;
+import com.backend1inl.domain.*;
+
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -85,4 +83,59 @@ public class TestData {
                 testItemEntity()
         );
     }
+
+    public static List<OrderEntity> listOfOrderEntities() throws IOException {
+        return Arrays.asList(
+                OrderEntity.builder()
+                        .id(1L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build(),
+
+                OrderEntity.builder()
+                        .id(2L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build(),
+
+                OrderEntity.builder()
+                        .id(3L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build()
+        );
+    }
+
+    public static List<OrderDTO> listOfOrderDTOs() {
+        return List.of(
+                OrderDTO.builder()
+                        .id(1L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .items(new ArrayList<>())
+                        .build(),
+
+                OrderDTO.builder()
+                        .id(2L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .items(new ArrayList<>())
+                        .build(),
+
+                OrderDTO.builder()
+                        .id(3L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .items(new ArrayList<>())
+                        .build()
+        );
+    }
+
+
 }
