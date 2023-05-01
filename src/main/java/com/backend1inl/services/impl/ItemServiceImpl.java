@@ -114,7 +114,6 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    // TODO Skita i balance ?
     @Override
     public Item updateBalanceOfItemEntity(Long balance, Long id) {
 
