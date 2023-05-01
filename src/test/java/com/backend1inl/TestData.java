@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TestData {
 
@@ -61,11 +62,10 @@ public class TestData {
                 .id(1L)
                 .created(LocalDate.now())
                 .lastUpdated(LocalDate.now())
-                .imgData(multiPartFile().getBytes()) //vad tror du om detta
+                .imgData(ItemImageUtils.compressImage(multiPartFile().getBytes()))
                 .name("Bullens pilsnerkorv")
                 .balance(15L)
                 .price(33L)
-                .orders(new HashSet<>()) // ?
                 .build();
     }
 

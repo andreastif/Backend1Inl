@@ -55,8 +55,8 @@ public class ItemController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> deleteItemById(@PathVariable Long id) {
         log.info("DELETE: Item id {}", id);
-        itemService.deleteItemEntityById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        var response = itemService.deleteItemEntityById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //create new items

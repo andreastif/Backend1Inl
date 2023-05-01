@@ -2,6 +2,7 @@ package com.backend1inl.services;
 
 import com.backend1inl.domain.Item;
 import com.backend1inl.domain.ItemEntity;
+import com.backend1inl.utils.DeleteResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +30,7 @@ public interface ItemService {
 
     String itemURIBuilder(Long id);
 
-    void deleteItemEntityById(Long id);
+    DeleteResponse deleteItemEntityById(Long id);
 
     Item updateItemEntity(Item item, MultipartFile file, Long id) throws IOException;
 

@@ -7,10 +7,12 @@ import com.backend1inl.exception.InvalidPriceException;
 import com.backend1inl.exception.NoSuchItemException;
 import com.backend1inl.repositories.ItemRepository;
 import com.backend1inl.services.ItemService;
+import com.backend1inl.utils.DeleteResponse;
 import com.backend1inl.utils.ItemImageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -152,22 +154,40 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemEntity itemToItemEntity(Item item, MultipartFile file) throws IOException {
-        return ItemEntity.builder().name(item.getName()).price(item.getPrice()).balance(item.getBalance()).imgData(ItemImageUtils.compressImage(file.getBytes())).build();
+        return ItemEntity
+                .builder()
+                .name(item.getName())
+                .price(item.getPrice())
+                .balance(item.getBalance())
+                .created(item.getCreated())
+                .lastUpdated(item.getLastUpdated())
+                .imgData(ItemImageUtils.compressImage(file.getBytes()))
+                .build();
     }
 
     @Override
     public Item itemEntityToItem(ItemEntity itemEntity) {
-        return Item.builder().id(itemEntity.getId()).price(itemEntity.getPrice()).balance(itemEntity.getBalance()).created(itemEntity.getCreated()).lastUpdated(itemEntity.getLastUpdated()).URI(itemURIBuilder(itemEntity.getId())).name(itemEntity.getName()).build();
+        return Item
+                .builder()
+                .id(itemEntity.getId())
+                .price(itemEntity.getPrice())
+                .balance(itemEntity.getBalance())
+                .created(itemEntity.getCreated())
+                .lastUpdated(itemEntity.getLastUpdated())
+                .URI(itemURIBuilder(itemEntity.getId()))
+                .name(itemEntity.getName())
+                .build();
     }
 
 
     @Override
-    public void deleteItemEntityById(Long id) {
-        try {
-            itemRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new NoSuchItemException("Specified item could not be found");
+    public DeleteResponse deleteItemEntityById(Long id) {
+        var match = itemRepository.findById(id);
+        if (match.isPresent()) {
+            itemRepository.deleteById(match.get().getId());
+            return new DeleteResponse(true);
         }
+        return new DeleteResponse(false);
     }
 
 
