@@ -2,9 +2,17 @@ package com.backend1inl;
 
 import com.backend1inl.domain.Customer;
 import com.backend1inl.domain.CustomerEntity;
+import com.backend1inl.domain.Item;
+import com.backend1inl.domain.ItemEntity;
+import com.backend1inl.utils.ItemImageUtils;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class TestData {
@@ -34,6 +42,47 @@ public class TestData {
     public static List<CustomerEntity> listOfCustomerEntities() {
         return Arrays.asList(
                 testCustomerEntity()
+        );
+    }
+
+    // TODO: Skapa TestData för Item + ItemEntity
+
+    //
+    public static MultipartFile multiPartFile() {
+        //should work, om denna funkar så kan vi ha det som "testfil" substitute. vi validerar ändå inte .jpeg/png osv (nice to have, hittade en guide för det)
+        return new MockMultipartFile("foo",
+                "foo.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello world".getBytes());
+    }
+
+    public static ItemEntity testItemEntity() throws IOException {
+        return ItemEntity.builder()
+                .id(1L)
+                .created(LocalDate.now())
+                .lastUpdated(LocalDate.now())
+                .imgData(multiPartFile().getBytes()) //vad tror du om detta
+                .name("Bullens pilsnerkorv")
+                .balance(15L)
+                .price(33L)
+                .orders(new HashSet<>()) // ?
+                .build();
+    }
+
+    public static Item testItem() throws IOException {
+        return Item.builder()
+                .id(1L)
+                .created(LocalDate.now())
+                .lastUpdated(LocalDate.now())
+                .name("Bullens pilsnerkorv")
+                .balance(15L)
+                .price(33L)
+                .build();
+    }
+
+    public static List<ItemEntity> listOfItemEntities() throws IOException {
+        return Arrays.asList(
+                testItemEntity()
         );
     }
 }

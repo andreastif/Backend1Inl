@@ -38,7 +38,7 @@ public class CustomerController {
                 linkTo(methodOn(CustomerController.class).retrieveCustomer(savedCustomer.getId())).withSelfRel(),
                 linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-customers"));
 
-        log.info("Created new customer with id {}", savedCustomer.getId());
+        log.info("POST: Created new customer with id {}", savedCustomer.getId());
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -46,6 +46,9 @@ public class CustomerController {
     //READ
     @GetMapping
     public ResponseEntity<List<Customer>> listCustomers() {
+
+        log.info("GET: All customers listed");
+
         return new ResponseEntity<>(customerService.listCustomers(), HttpStatus.OK);
     }
 
@@ -53,10 +56,13 @@ public class CustomerController {
     public ResponseEntity<EntityModel<Customer>> retrieveCustomer(@PathVariable final Long id) {
         final Customer foundCustomer = customerService.findCustomerById(id);
 
+
         // Hateoas links
         EntityModel<Customer> entityModel = EntityModel.of(foundCustomer,
                 linkTo(methodOn(CustomerController.class).retrieveCustomer(foundCustomer.getId())).withSelfRel(),
                 linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-customers"));
+
+        log.info("GET: Customer with id: " + id);
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
@@ -73,11 +79,11 @@ public class CustomerController {
                 linkTo(methodOn(CustomerController.class).listCustomers()).withRel("all-lists"));
 
         if (exists) {
-            log.info("UPDATED customer: {}", savedCustomer);
+            log.info("UPDATED: customer: {}", savedCustomer);
             return new ResponseEntity<>(entityModel, HttpStatus.OK);
         }
 
-        log.info("POST customer: {}", savedCustomer);
+        log.info("POST: customer: {}", savedCustomer);
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
@@ -85,6 +91,8 @@ public class CustomerController {
     @DeleteMapping("{id}")
     public ResponseEntity<DeleteResponse> deleteCustomerById(@PathVariable Long id) {
         boolean deleted = customerService.deleteCustomerById(id);
+
+        log.info("DELETE: Customer with id: " + id);
         return new ResponseEntity<>(new DeleteResponse(deleted), HttpStatus.OK);
     }
 
