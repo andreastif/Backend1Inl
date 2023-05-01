@@ -77,6 +77,7 @@ public class TestData {
                 .name("Bullens pilsnerkorv")
                 .balance(15L)
                 .price(33L)
+                .URI("test")
                 .build();
     }
 

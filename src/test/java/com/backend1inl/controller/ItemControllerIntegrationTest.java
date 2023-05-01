@@ -1,6 +1,9 @@
 package com.backend1inl.controller;
 
+
 import com.backend1inl.TestData;
+import com.backend1inl.domain.Item;
+import com.backend1inl.exception.NoSuchItemException;
 import com.backend1inl.repositories.ItemRepository;
 import com.backend1inl.services.ItemService;
 
@@ -232,16 +235,13 @@ public class ItemControllerIntegrationTest {
 
 
     @Test
-    public void testGetItemId9991DoesNotExist() throws Exception {
-
-        String url = "/items/9991";
-
+    public void  testThatGetItemReturns404WhenNotFound() throws Exception {
+        String url = "/items/99";
+        when(mockService.findItemEntityById(99L)).thenThrow(NoSuchItemException.class);
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
-
-
 
 
 }
