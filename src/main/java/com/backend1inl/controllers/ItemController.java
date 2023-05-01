@@ -20,7 +20,6 @@ import java.io.IOException;
 @Slf4j
 public class ItemController {
 
-    //TODO: SAKNAR UNIT + INTEGRATIONSTEST
 
     private final ItemService itemService;
 

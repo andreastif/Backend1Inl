@@ -28,7 +28,6 @@ import java.util.Optional;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    //TODO: SAKNAR ENHETSTESTER
 
     private final ItemRepository itemRepository;
 

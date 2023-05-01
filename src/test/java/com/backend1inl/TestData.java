@@ -46,7 +46,6 @@ public class TestData {
         );
     }
 
-    // TODO: Skapa TestData för Item + ItemEntity
 
     //
     public static MultipartFile multiPartFile() {
