@@ -112,6 +112,25 @@ public class TestData {
         );
     }
 
+    public static OrderEntity orderEntity() {
+        return OrderEntity.builder()
+                        .id(1L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build();
+    }
+
+    public static OrderDTO orderDTO() {
+        return OrderDTO.builder()
+                .id(1L)
+                .created(LocalDate.now())
+                .items(new ArrayList<>())
+                .lastUpdated(LocalDate.now())
+                .build();
+    }
+
     public static List<OrderDTO> listOfOrderDTOs() {
         return List.of(
                 OrderDTO.builder()

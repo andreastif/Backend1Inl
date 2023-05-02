@@ -5,6 +5,7 @@ package com.backend1inl.controllers;
 import com.backend1inl.domain.OrderDTO;
 import com.backend1inl.domain.OrderItemDTO;
 import com.backend1inl.services.OrderService;
+import com.backend1inl.utils.DeleteResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,6 +56,14 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<DeleteResponse> deleteOrderById(@PathVariable Long id) {
+        var response = orderService.deleteOrderById(id);
+        log.info("Delete response: {}", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     // Ta bort Order By Id
+    // Ta bort Item på spec Order
 }

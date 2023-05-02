@@ -11,6 +11,7 @@ import com.backend1inl.repositories.OrderRepository;
 import com.backend1inl.services.ItemService;
 import com.backend1inl.services.OrderService;
 
+import com.backend1inl.utils.DeleteResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderItemDTO addItemToOrder(Long orderId, Long itemId, int amount) {
         var matchItem = itemRepository.findById(itemId).orElseThrow( () -> new NoSuchItemException("No item with id: " + itemId + " found"));
-        var matchOrder = orderRepository.findById(orderId).orElseThrow( () -> new NoSuchOrderException("No order with id: " + orderId + " found"));;
+        var matchOrder = orderRepository.findById(orderId).orElseThrow( () -> new NoSuchOrderException("No order with id: " + orderId + " found"));
 
             Long currentBalance = matchItem.getBalance();
             matchItem.setBalance(currentBalance - amount);
@@ -76,6 +77,16 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow( () -> new NoSuchOrderException("No order with id: " + id + " found"));
 
         return toDTO(matchOrderEntity);
+    }
+
+    @Override
+    public DeleteResponse deleteOrderById(Long id) {
+        var match = orderRepository.findById(id);
+        if (match.isPresent()) {
+            orderRepository.deleteById(match.get().getId());
+            return new DeleteResponse(true);
+        }
+        return new DeleteResponse(false);
     }
 
 

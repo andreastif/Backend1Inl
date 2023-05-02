@@ -12,9 +12,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -51,6 +54,15 @@ public class OrderControllerIntegrationTest {
         String url = "/orders";
         List<OrderEntity> orderEntities = TestData.listOfOrderEntities();
 
+        String currentDate = orderEntities.get(0)
+                .getCreated().
+                format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        String lastUpdated = orderEntities.get(0)
+                .getLastUpdated().
+                format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+
         String orderListJSON = "[{\"id\":1,\"created\":\"2023-05-01\",\"lastUpdated\":\"2023-05-01\",\"items\":[]},{\"id\":2,\"created\":\"2023-05-01\",\"lastUpdated\":\"2023-05-01\",\"items\":[]},{\"id\":3,\"created\":\"2023-05-01\",\"lastUpdated\":\"2023-05-01\",\"items\":[]}]";
 
         when(mockOrderRepo.findAll()).thenReturn(orderEntities);
@@ -60,5 +72,28 @@ public class OrderControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(orderListJSON));
 
+    }
+
+    @Test
+    public void testThatFindOrderByIdReturnsCorrectOrderAnd200() throws Exception {
+        var testDTO = TestData.orderDTO();
+        var testEntity = TestData.orderEntity();
+        String url = "/orders/" + testDTO.getId();
+
+        when(mockOrderRepo.findById(testDTO.getId())).thenReturn(Optional.of(testEntity));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.id").value(testDTO.getId())
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.lastUpdated").value(testDTO.getLastUpdated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                )
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.created").value(testDTO.getLastUpdated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                );
     }
 }
