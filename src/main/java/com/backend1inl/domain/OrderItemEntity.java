@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-@Table(name = "order_item")
+@Table(name = "order_item") // mappnings-tabellen
 public class OrderItemEntity {
 
     @Id
