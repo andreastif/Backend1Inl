@@ -63,7 +63,7 @@ public class OrderControllerIntegrationTest {
                 format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 
-        String orderListJSON = "[{\"id\":1,\"created\":\"2023-05-01\",\"lastUpdated\":\"2023-05-01\",\"items\":[]},{\"id\":2,\"created\":\"2023-05-01\",\"lastUpdated\":\"2023-05-01\",\"items\":[]},{\"id\":3,\"created\":\"2023-05-01\",\"lastUpdated\":\"2023-05-01\",\"items\":[]}]";
+        String orderListJSON = "[{\"id\":1,\"created\":\""+currentDate+"\" ,\"lastUpdated\":\""+lastUpdated+"\",\"items\":[]},{\"id\":2,\"created\":\""+currentDate+"\",\"lastUpdated\":\""+lastUpdated+"\",\"items\":[]},{\"id\":3,\"created\":\""+currentDate+"\",\"lastUpdated\":\""+lastUpdated+"\",\"items\":[]}]";
 
         when(mockOrderRepo.findAll()).thenReturn(orderEntities);
 
