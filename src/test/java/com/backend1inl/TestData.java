@@ -2,6 +2,7 @@ package com.backend1inl;
 
 import com.backend1inl.domain.*;
 
+import com.backend1inl.utils.ItemImageUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 public class TestData {
 
