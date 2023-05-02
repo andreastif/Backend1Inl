@@ -82,7 +82,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(ex.getMessage())
                 .details(request.getDescription(false))
                 .build();
-        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidItemNameException.class)

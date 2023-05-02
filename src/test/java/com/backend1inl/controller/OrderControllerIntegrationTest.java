@@ -96,4 +96,15 @@ public class OrderControllerIntegrationTest {
                         "$.created").value(testDTO.getLastUpdated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 );
     }
+
+    @Test
+    public void testThatFindOrderByIdIfNotExistsShows404() throws Exception {
+        String url = "/orders/1337";
+
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.message").value("No order with id: 1337 found"));
+    }
 }

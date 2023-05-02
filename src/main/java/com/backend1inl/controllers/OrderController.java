@@ -5,7 +5,6 @@ package com.backend1inl.controllers;
 import com.backend1inl.domain.OrderDTO;
 import com.backend1inl.domain.OrderItemDTO;
 import com.backend1inl.services.OrderService;
-import com.backend1inl.utils.DeleteResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +28,7 @@ public class OrderController {
     }
 
 
+    // Lägga till Produkt på bef order
     // tex  .../orders/buy?itemId=10004&orderId=10001&quantity=3
     @PostMapping("buy")
     public ResponseEntity<OrderItemDTO> addItemToOrder(@RequestParam Long itemId, @RequestParam Long orderId, @RequestParam int quantity) {
@@ -38,6 +38,7 @@ public class OrderController {
         return new ResponseEntity<>(savedOrderItemDTO, HttpStatus.CREATED);
     }
 
+    // Hämta Alla orders i DB
     @GetMapping
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<OrderDTO> allOrders = orderService.getAllOrders();
@@ -56,14 +57,5 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<DeleteResponse> deleteOrderById(@PathVariable Long id) {
-        var response = orderService.deleteOrderById(id);
-        log.info("Delete response: {}", response);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
-
-    // Ta bort Order By Id
-    // Ta bort Item på spec Order
 }

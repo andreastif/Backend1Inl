@@ -4,7 +4,6 @@ package com.backend1inl.services;
 
 import com.backend1inl.domain.OrderDTO;
 import com.backend1inl.domain.OrderItemDTO;
-import com.backend1inl.utils.DeleteResponse;
 
 import java.util.List;
 
@@ -14,6 +13,4 @@ public interface OrderService {
     List<OrderDTO> getAllOrders();
 
     OrderDTO getItemsByOrderId(Long id);
-
-    DeleteResponse deleteOrderById(Long id);
 }
