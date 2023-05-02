@@ -1,0 +1,24 @@
+<div th:insert="header.html"></div>
+<section class="container">
+    <h1 class="text-center mb-5">Alla Ordrar I databasen</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Order Nr</th>
+            <th scope="col">Skapad</th>
+            <th scope="col">Senast Updaterad</th>
+            <th scope="col">Se Produkter</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.getId()}"></td>
+            <td th:text="${order.getCreated()}"></td>
+            <td th:text="${order.getLastUpdated()}"></td>
+            <td><a th:href="@{/thyme/orders/{id} (id = ${order.getId()})}" class="btn btn-secondary">Produkter</a></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<div th:insert="footer.html"></div>

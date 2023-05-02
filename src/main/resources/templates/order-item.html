@@ -1,0 +1,34 @@
+<div th:insert="header.html"></div>
+<section class="container">
+
+    <h1 th:text="'Order: ' + ${order.getId()}" class="text-center mb-5"></h1>
+
+    <div th:if="${hasItems}">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Produkt ID</th>
+            <th scope="col">Namn</th>
+            <th scope="col">Saldo</th>
+            <th scope="col">Pris</th>
+            <th scope="col">Bild</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.getId()}"></td>
+            <td th:text="${item.getName()}"></td>
+            <td th:text="${item.getBalance()}"></td>
+            <td th:text="${item.getPrice()}"></td>
+            <td><a th:href="${item.getURI()}" class="btn btn-secondary">Produktbild</a></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div th:unless="${hasItems}" class="text-center">
+        <h2>Inga produkter finns just nu på denna order</h2>
+    </div>
+
+</section>
+<div th:insert="footer.html"></div>
