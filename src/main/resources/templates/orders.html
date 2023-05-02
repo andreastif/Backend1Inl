@@ -1,8 +1,8 @@
-<div th:insert="header.html"></div>
+<div th:insert="~{header.html}"></div>
 <section class="container">
     <h1 class="text-center mb-5">Alla Ordrar I databasen</h1>
 
-    <table class="table">
+    <table class="table table-striped">
         <thead>
         <tr>
             <th scope="col">Order Nr</th>
@@ -21,4 +21,4 @@
         </tbody>
     </table>
 </section>
-<div th:insert="footer.html"></div>
+<div th:insert="~{footer.html}"></div>
