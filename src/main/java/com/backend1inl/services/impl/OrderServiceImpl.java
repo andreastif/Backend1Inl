@@ -2,16 +2,20 @@ package com.backend1inl.services.impl;
 
 
 
-import com.backend1inl.domain.OrderItemDTO;
-import com.backend1inl.domain.OrderItemEntity;
-import com.backend1inl.exception.NoSuchCustomerException;
+import com.backend1inl.domain.*;
+import com.backend1inl.exception.NoSuchItemException;
+import com.backend1inl.exception.NoSuchOrderException;
 import com.backend1inl.repositories.ItemRepository;
 import com.backend1inl.repositories.OrderItemRepository;
 import com.backend1inl.repositories.OrderRepository;
+import com.backend1inl.services.ItemService;
 import com.backend1inl.services.OrderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,37 +25,34 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderItemRepository orderItemRepository;
 
+    private final ItemService itemService;
+
     private final ItemRepository itemRepository;
 
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ItemRepository itemRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ItemService itemService, ItemRepository itemRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
+        this.itemService = itemService;
         this.itemRepository = itemRepository;
     }
 
     @Override
     public OrderItemDTO addItemToOrder(Long orderId, Long itemId, int amount) {
-        // TODO Skapa NoSuchOrderException + NoSuchItemException, så slipper vi ha isPresent()
-        var matchItem = itemRepository.findById(itemId);
-        var matchOrder = orderRepository.findById(orderId);
+        var matchItem = itemRepository.findById(itemId).orElseThrow( () -> new NoSuchItemException("No item with id: " + itemId + " found"));
+        var matchOrder = orderRepository.findById(orderId).orElseThrow( () -> new NoSuchOrderException("No order with id: " + orderId + " found"));
 
-        if(matchOrder.isPresent() && matchItem.isPresent()) {
+            Long currentBalance = matchItem.getBalance();
+            matchItem.setBalance(currentBalance - amount);
 
-            // TODO TA BORT balance ?
-            Long currentBalance = matchItem.get().getBalance();
-            matchItem.get().setBalance(currentBalance - amount);
-
-
-            itemRepository.save(matchItem.get());
+            itemRepository.save(matchItem);
             OrderItemEntity orderItem = OrderItemEntity.builder()
-                    .orderEntity(matchOrder.get())
-                    .itemEntity(matchItem.get())
+                    .orderEntity(matchOrder)
+                    .itemEntity(matchItem)
                     .quantity(amount)
                     .build();
 
-            // nytt Att Testa
             var savedOrderItem = orderItemRepository.save(orderItem);
 
             return OrderItemDTO.builder()
@@ -62,7 +63,40 @@ public class OrderServiceImpl implements OrderService {
                     .build();
         }
 
-        // Skall tas bort sedan när vi impl dem andra exceptions, behövs nu pga if-satsen isPresent()
-        throw new NoSuchCustomerException("Random fel");
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(orderEntity -> toDTO(orderEntity))
+                .collect(Collectors.toList());
     }
+
+    @Override
+    public OrderDTO getItemsByOrderId(Long id) {
+        var matchOrderEntity = orderRepository.findById(id)
+                .orElseThrow( () -> new NoSuchOrderException("No order with id: " + id + " found"));
+
+        return toDTO(matchOrderEntity);
+    }
+
+
+    private Item toItemDTO(ItemEntity itemEntity) {
+        return itemService.itemEntityToItem(itemEntity);
+    }
+
+    private OrderDTO toDTO(OrderEntity orderEntity) {
+        // All items related to order
+        List<Item> itemsDTOList = orderEntity.getOrders()
+                .stream()
+                .map(orderItemEntity -> toItemDTO(orderItemEntity.getItemEntity()))
+                .toList();
+
+        return OrderDTO.builder()
+                .id(orderEntity.getId())
+                .lastUpdated(orderEntity.getLastUpdated())
+                .created(orderEntity.getCreated())
+                .items(itemsDTOList)
+                .build();
+    }
+
 }
+

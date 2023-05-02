@@ -41,7 +41,7 @@ public class CustomerControllerIntegrationTest {
     private CustomerRepository mockRepo;
 
     @MockBean
-    CustomerService mockService;
+    private CustomerService mockService;
 
     @Test
     void testGetAllCustomersEndpointLives() throws Exception {
