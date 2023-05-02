@@ -1,16 +1,18 @@
 -- DATA SEED
 
+-- Customers
 insert into customers(id, first_name, last_name, ssn, created, last_updated)
 values
 (10001, 'Daniel', 'Fellden', '8505243241', current_timestamp(), current_timestamp()),
 (10002, 'Alex', 'Brun', '5052412416', current_timestamp(), current_timestamp()),
 (10003, 'Ceasar', 'Olle', '8505241241', current_timestamp(), current_timestamp());
 
-
+-- Förberett order utan några items i sig
 insert into orders(id, created, last_updated, customer_id)
 values
 (10001, current_timestamp(),  current_timestamp(), 10001);
 
+-- Items
 insert into items(id, name, price, balance, created, last_updated)
 values
 (10001, 'banana', 20, 155, current_timestamp(), current_timestamp()),
