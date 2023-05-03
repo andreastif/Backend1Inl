@@ -1,7 +1,7 @@
 <div th:insert="~{header.html}"></div>
 <section class="container">
 
-    <h1 th:text="'Order: ' + ${order.getId()}" class="text-center mb-5"></h1>
+    <h1 th:text="'Order: ' + ${order.getId()}" class="center mb-5"></h1>
 
     <div th:if="${hasItems}">
         <table class="table table-striped">
