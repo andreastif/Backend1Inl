@@ -3,8 +3,10 @@ package com.backend1inl.services.impl;
 
 
 import com.backend1inl.domain.*;
+import com.backend1inl.exception.NoSuchCustomerException;
 import com.backend1inl.exception.NoSuchItemException;
 import com.backend1inl.exception.NoSuchOrderException;
+import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.repositories.ItemRepository;
 import com.backend1inl.repositories.OrderItemRepository;
 import com.backend1inl.repositories.OrderRepository;
@@ -29,13 +31,15 @@ public class OrderServiceImpl implements OrderService {
 
     private final ItemRepository itemRepository;
 
+    private final CustomerRepository customerRepository;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ItemService itemService, ItemRepository itemRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ItemService itemService, ItemRepository itemRepository, CustomerRepository customerRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.itemService = itemService;
         this.itemRepository = itemRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -76,6 +80,19 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow( () -> new NoSuchOrderException("No order with id: " + id + " found"));
 
         return toDTO(matchOrderEntity);
+    }
+
+    @Override
+    public List<OrderDTO> getOrdersByCustomerId(Long id) {
+
+      var matchCustomerEntity = customerRepository.findById(id)
+              .orElseThrow(() -> new NoSuchCustomerException("No customer with id: " + id + " found"));
+
+      var orders = matchCustomerEntity.getOrders();
+
+        return orders.stream()
+                .map(this::toDTO)
+                .toList();
     }
 
 
