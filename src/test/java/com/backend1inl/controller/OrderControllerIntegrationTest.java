@@ -3,6 +3,7 @@ package com.backend1inl.controller;
 
 import com.backend1inl.TestData;
 import com.backend1inl.domain.OrderEntity;
+import com.backend1inl.repositories.CustomerRepository;
 import com.backend1inl.repositories.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -34,6 +36,9 @@ public class OrderControllerIntegrationTest {
 
     @MockBean
     private OrderRepository mockOrderRepo;
+
+    @MockBean
+    private CustomerRepository mockCustomerRepo;
 
 
     @Test
@@ -106,5 +111,34 @@ public class OrderControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath(
                         "$.message").value("No order with id: 1337 found"));
+    }
+
+    @Test
+    public void testThatFindOrdersByCustomerIdReturnsEmptyList200IfNone() throws Exception {
+        var customerEntity = TestData.testCustomerEntity();
+        String url = "/orders/customer/" + customerEntity.getId();
+
+        when(mockCustomerRepo.findById(customerEntity.getId())).thenReturn(Optional.of(customerEntity));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
+    }
+
+    @Test
+    public void testThatFindOrdersByCustomerIdReturnsCorrectList200IfExists() throws Exception {
+        var customerEntity = TestData.testCustomerEntityWithOrders();
+        String url = "/orders/customer/" + customerEntity.getId();
+
+        when(mockCustomerRepo.findById(customerEntity.getId())).thenReturn(Optional.of(customerEntity));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$", hasSize(3))); // $ rep hela listan
+
     }
 }

@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 
 public class TestData {
@@ -24,6 +21,19 @@ public class TestData {
                 .lastUpdated(LocalDate.now())
                 .firstName("Test")
                 .lastName("Test")
+                .orders(new HashSet<>())
+                .ssn("9108233876")
+                .build();
+    }
+
+    public static CustomerEntity testCustomerEntityWithOrders() {
+        return CustomerEntity.builder()
+                .id(1L)
+                .created(LocalDate.now())
+                .lastUpdated(LocalDate.now())
+                .firstName("Test")
+                .lastName("Test")
+                .orders(setOfOrderEntities())
                 .ssn("9108233876")
                 .build();
     }
@@ -67,7 +77,7 @@ public class TestData {
                 .build();
     }
 
-    public static Item testItem() throws IOException {
+    public static Item testItem() {
         return Item.builder()
                 .id(1L)
                 .created(LocalDate.now())
@@ -85,8 +95,36 @@ public class TestData {
         );
     }
 
-    public static List<OrderEntity> listOfOrderEntities() throws IOException {
+    public static List<OrderEntity> listOfOrderEntities() {
         return Arrays.asList(
+                OrderEntity.builder()
+                        .id(1L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build(),
+
+                OrderEntity.builder()
+                        .id(2L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build(),
+
+                OrderEntity.builder()
+                        .id(3L)
+                        .created(LocalDate.now())
+                        .lastUpdated(LocalDate.now())
+                        .customerEntity(testCustomerEntity())
+                        .orders(new HashSet<>())
+                        .build()
+        );
+    }
+
+    public static Set<OrderEntity> setOfOrderEntities() {
+        return Set.of(
                 OrderEntity.builder()
                         .id(1L)
                         .created(LocalDate.now())
