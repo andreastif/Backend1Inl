@@ -1,0 +1,13 @@
+body {
+    padding: 8% 10%;
+    --primary: #7cb342;
+    --primary-hover: #689f38;
+    --primary-focus: rgba(124, 179, 66, 0.125);
+    --primary-inverse: #FFF;
+}
+
+.center {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
