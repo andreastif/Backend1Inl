@@ -1,7 +1,6 @@
 package com.backend1inl.thymeleaf.controller;
 
 import com.backend1inl.services.CustomerService;
-import com.backend1inl.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
