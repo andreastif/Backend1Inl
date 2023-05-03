@@ -100,6 +100,7 @@ public class OrderServiceImpl implements OrderService {
         return itemService.itemEntityToItem(itemEntity);
     }
 
+
     private OrderDTO toDTO(OrderEntity orderEntity) {
         // All items related to order
         List<Item> itemsDTOList = orderEntity.getOrders()
