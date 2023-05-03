@@ -26,7 +26,7 @@ public class OrderEntity {
 
     @ManyToOne(optional = false) // Order måste va bunden till kund, får ej va null på FK!
     @JoinColumn(name = "customer_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE) // Tas kund bort tas order bort i vårat fall
     private CustomerEntity customerEntity;
 
     private LocalDate created;
