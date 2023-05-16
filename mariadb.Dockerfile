@@ -1,0 +1,9 @@
+FROM mariadb:10.4
+
+ENV MYSQL_DATABASE milosdb
+ENV MYSQL_RANDOM_ROOT_PASSWORD yes
+ENV MYSQL_USER ricardo
+ENV MYSQL_PASSWORD milos
+
+COPY sql/ /docker-entrypoint-initdb.d/
+EXPOSE 3306

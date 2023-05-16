@@ -22,7 +22,8 @@ import java.util.Set;
 public class CustomerEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customers_seq_generator")
+    @SequenceGenerator(name = "customers_seq_generator", sequenceName = "customer_seq", allocationSize = 1)
     private Long id;
 
     @NotEmpty(message = "First Name Is Mandatory")

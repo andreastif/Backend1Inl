@@ -32,6 +32,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
     testImplementation ("org.springframework.boot:spring-boot-starter-test")
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client") // maria db
 }
 
 tasks.withType<Test> {
